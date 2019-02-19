@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Common.Data.TermDoc>
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h1>Search</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.DocumentPath)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LineNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LinePosition)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DocumentPath)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LineNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LinePosition)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

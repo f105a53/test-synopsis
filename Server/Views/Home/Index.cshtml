@@ -1,8 +1,25 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Search";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<br />
+<br />
+<div class="col align-self-center">
+    <div class="card-container">
+        <div class="card">
+
+            <h1 class="display-2 align-self-center">Search</h1>
+
+            <form method="post">
+                <div class="form-group">
+                    <input class="form-control" name="searchQuery" style="margin-left: 5px; margin-right:5px;" placeholder="Search something..." />
+
+                    <br />
+
+                    <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> Search</button>
+                    <button class="btn btn-secondary" type="button"><i class="fab fa-accessible-icon"></i> I'm feeling lucky</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
