@@ -7,17 +7,17 @@ GO
 
 IF Object_ID('tblDocument') IS NOT NULL
 	DROP TABLE tblDocument
-CREATE TABLE tblDocument (fldUrl VARCHAR(MAX) PRIMARY KEY,
+CREATE TABLE tblDocument (fldUrl VARCHAR(256) PRIMARY KEY,
 						  fldModifiedDate DATETIME NOT NULL)
 
 IF Object_ID('tblTerm') IS NOT NULL
 	DROP TABLE tblTerm
-CREATE TABLE tblTerm (fldVal NVARCHAR(MAX) PRIMARY KEY)
+CREATE TABLE tblTerm (fldVal NVARCHAR(100) PRIMARY KEY)
 
 IF Object_ID('tblTermDoc') IS NOT NULL
 	DROP TABLE tblTermDoc
 CREATE TABLE tblTermDoc (fldId UNIQUEIDENTIFIER PRIMARY KEY,
-						 fldDocUrl VARCHAR(MAX) FOREIGN KEY REFERENCES tblDocument(fldUrl) NOT NULL,
-						 fldTermId NVARCHAR(MAX) FOREIGN KEY REFERENCES tblTerm(fldVal) NOT NULL,
+						 fldDocUrl VARCHAR(256) FOREIGN KEY REFERENCES tblDocument(fldUrl) NOT NULL,
+						 fldTermId NVARCHAR(100) FOREIGN KEY REFERENCES tblTerm(fldVal) NOT NULL,
 						 fldLinePos INTEGER NOT NULL,
 						 fldLineNo INTEGER NOT NULL)

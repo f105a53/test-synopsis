@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Common.Data;
+using LinqToDB.Data;
 using ShellProgressBar;
 
 namespace Indexer
@@ -30,7 +32,9 @@ namespace Indexer
         }
         static void Main(string[] args)
         {
-            var root = new DirectoryInfo("/home/jghz/maildir/");
+            DataConnection.DefaultSettings = new LinqToDbSettings();
+            var db = new DbContext();
+            var root = new DirectoryInfo(@"D:\j200g\Documents\IISExpress");
             var files = Crawl(root).ToList();
             var index = new SortedDictionary<string, List<TermLocation>>();
             using (var progresss = new ProgressBar(files.Count, "Reading files"))

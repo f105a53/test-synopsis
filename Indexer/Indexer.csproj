@@ -9,4 +9,8 @@
     <PackageReference Include="ShellProgressBar" Version="4.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
+
 </Project>
