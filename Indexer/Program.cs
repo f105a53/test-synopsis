@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Common.Data;
+using LinqToDB;
 using LinqToDB.Data;
 using ShellProgressBar;
 
@@ -23,6 +24,7 @@ namespace Indexer
         {
             DataConnection.DefaultSettings = new LinqToDbSettings();
             var db = new DbContext();
+            var docs = new List<Document>();
             var root = new DirectoryInfo(@"D:\j200g\Documents\IISExpress");
             var files = Crawl(root).ToList();
             var index = new SortedDictionary<string, List<TermLocation>>();
@@ -30,6 +32,13 @@ namespace Indexer
             {
                 foreach (var file in files)
                 {
+                    //// Perhaps change below to a stored procedure later on
+                    //if (!db.Document.Any(d => d.Path == file.FullName))
+                    //{
+                    //    db.Document.Insert(() => new Document()
+                    //        {LastModified = file.LastWriteTimeUtc, Path = file.FullName});
+                    //}
+                    docs.Add(new Document(){Path = file.FullName,LastModified = file.LastWriteTimeUtc});
                     using (var sr = file.OpenText())
                     {
                         var lineNumber = 0;
@@ -47,6 +56,11 @@ namespace Indexer
 
                     progresss.Tick();
                 }
+            }
+
+            using (var progresss = new ProgressBar(docs.Count, "Uploading"))
+            {
+                db.BulkCopy(new BulkCopyOptions() {NotifyAfter = 100, RowsCopiedCallback = r => progresss.Tick(progresss.CurrentTick+100)}, docs);
             }
 
             Console.WriteLine(index.Count);

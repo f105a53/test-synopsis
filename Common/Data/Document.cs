@@ -1,4 +1,5 @@
-﻿using LinqToDB.Mapping;
+﻿using System;
+using LinqToDB.Mapping;
 
 namespace Common.Data
 {
@@ -7,7 +8,7 @@ namespace Common.Data
     {
         [Column(Name = "fldModifiedDate")]
         [NotNull]
-        public long LastModified { get; set; }
+        public DateTime LastModified { get; set; }
 
         [PrimaryKey]
         [Identity]

@@ -6,7 +6,7 @@ namespace Common.Data
     public class DbContext : DataConnection
 
     {
-        public DbContext() : base("Database")
+        public DbContext() : base("SqlServer")
         {
         }
 
