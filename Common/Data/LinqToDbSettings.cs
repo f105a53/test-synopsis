@@ -13,9 +13,9 @@ namespace Common.Data
                 yield return
                     new ConnectionStringSettings
                     {
-                        Name = "SqlServer",
+                        Name = "DB_SearchEngine",
                         ProviderName = "SqlServer",
-                        ConnectionString = @"Server=.\;Database=DB_SearchEngine;Trusted_Connection=True;Enlist=False;"
+                        ConnectionString = @"Server=192.168.0.120;Database=DB_SearchEngine;Enlist=False;User ID=mikkel;Password=eerrddff11,,;"
                     };
             }
         }

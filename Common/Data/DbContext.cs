@@ -4,9 +4,8 @@ using LinqToDB.Data;
 namespace Common.Data
 {
     public class DbContext : DataConnection
-
     {
-        public DbContext() : base("SqlServer")
+        public DbContext() : base("DB_SearchEngine")
         {
         }
 

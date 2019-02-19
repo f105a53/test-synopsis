@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Common.Data;
+﻿using Common.Data;
 using LinqToDB;
 using LinqToDB.Data;
 using ShellProgressBar;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Indexer
 {
@@ -13,24 +13,35 @@ namespace Indexer
     {
         private static IEnumerable<FileInfo> Crawl(DirectoryInfo dir)
         {
-            foreach (var file in dir.EnumerateFiles()) yield return file;
-
-            foreach (var d in dir.EnumerateDirectories())
-            foreach (var file in Crawl(d))
+            foreach (FileInfo file in dir.EnumerateFiles())
+            {
                 yield return file;
+            }
+
+            foreach (DirectoryInfo d in dir.EnumerateDirectories())
+            {
+                foreach (FileInfo file in Crawl(d))
+                {
+                    yield return file;
+                }
+            }
         }
 
         private static void Main(string[] args)
         {
             DataConnection.DefaultSettings = new LinqToDbSettings();
-            var db = new DbContext();
-            var docs = new List<Document>();
-            var root = new DirectoryInfo(@"D:\j200g\Documents\IISExpress");
-            var files = Crawl(root).ToList();
-            var index = new SortedDictionary<string, List<TermLocation>>();
-            using (var progresss = new ProgressBar(files.Count, "Reading files"))
+            //LinqToDB.Data.DataConnection.TurnTraceSwitchOn();
+            //LinqToDB.Data.DataConnection.WriteTraceLine = (message, displayName) => { Console.WriteLine($"{message} {displayName}"); };
+
+            DbContext db = new DbContext();
+            db.Document.Delete();
+            List<Document> docs = new List<Document>();
+            DirectoryInfo root = new DirectoryInfo(@"G:\Mapper\enron_dataset\maildir\allen-p\");
+            List<FileInfo> files = Crawl(root).ToList();
+            SortedDictionary<string, List<TermLocation>> index = new SortedDictionary<string, List<TermLocation>>();
+            using (ProgressBar progress = new ProgressBar(files.Count, "Reading files"))
             {
-                foreach (var file in files)
+                foreach (FileInfo file in files)
                 {
                     //// Perhaps change below to a stored procedure later on
                     //if (!db.Document.Any(d => d.Path == file.FullName))
@@ -38,44 +49,67 @@ namespace Indexer
                     //    db.Document.Insert(() => new Document()
                     //        {LastModified = file.LastWriteTimeUtc, Path = file.FullName});
                     //}
-                    docs.Add(new Document(){Path = file.FullName,LastModified = file.LastWriteTimeUtc});
-                    using (var sr = file.OpenText())
+                    docs.Add(new Document() { Path = file.FullName, LastModified = file.LastWriteTimeUtc });
+
+                    using (StreamReader sr = file.OpenText())
                     {
-                        var lineNumber = 0;
+                        int lineNumber = 0;
                         while (!sr.EndOfStream)
                         {
-                            var loc = new TermLocation {Path = file.FullName, LineNumber = lineNumber++};
-                            var terms = sr.ReadLine().Split(' ');
-                            foreach (var term in terms)
+                            TermLocation loc = new TermLocation { Path = file.FullName, LineNumber = lineNumber++ };
+                            string[] terms = sr.ReadLine().Split(' ');
+                            foreach (string term in terms)
+                            {
                                 if (index.ContainsKey(term))
+                                {
                                     index[term].Add(loc);
+                                }
                                 else
-                                    index.Add(term, new List<TermLocation> {loc});
+                                {
+                                    index.Add(term, new List<TermLocation> { loc });
+                                }
+                            }
                         }
                     }
 
-                    progresss.Tick();
+                    progress.Tick();
                 }
             }
 
-            using (var progresss = new ProgressBar(docs.Count, "Uploading"))
+            using (ProgressBar progress = new ProgressBar(docs.Count, "Uploading"))
             {
-                db.BulkCopy(new BulkCopyOptions() {NotifyAfter = 100, RowsCopiedCallback = r => progresss.Tick(progresss.CurrentTick+100)}, docs);
+                db.BulkCopy(new BulkCopyOptions()
+                {
+                    NotifyAfter = 100,
+                    RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int)r.RowsCopied,null)
+                }, docs);
             }
 
-            Console.WriteLine(index.Count);
-            while (true)
-            {
-                var search = Console.ReadLine();
-                if (index.TryGetValue(search, out var locs))
-                    foreach (var loc in locs)
-                        Console.WriteLine($"{loc.Path}@{loc.LineNumber}");
-                else
-                    foreach (var (term, locS) in index)
-                        if (term.Contains(search))
-                            foreach (var loc in locS)
-                                Console.WriteLine($"{loc.Path}@{loc.LineNumber}");
-            }
+            //Console.WriteLine(index.Count);
+            //while (true)
+            //{
+            //    string search = Console.ReadLine();
+            //    if (index.TryGetValue(search, out List<TermLocation> locs))
+            //    {
+            //        foreach (TermLocation loc in locs)
+            //        {
+            //            Console.WriteLine($"{loc.Path}@{loc.LineNumber}");
+            //        }
+            //    }
+            //    else
+            //    {
+            //        foreach ((string term, List<TermLocation> locS) in index)
+            //        {
+            //            if (term.Contains(search))
+            //            {
+            //                foreach (TermLocation loc in locS)
+            //                {
+            //                    Console.WriteLine($"{loc.Path}@{loc.LineNumber}");
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         private struct TermLocation
