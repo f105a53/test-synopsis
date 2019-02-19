@@ -34,16 +34,22 @@ namespace Indexer
             //LinqToDB.Data.DataConnection.WriteTraceLine = (message, displayName) => { Console.WriteLine($"{message} {displayName}"); };
 
             DbContext db = new DbContext();
+            db.TermDoc.Delete();
             db.Document.Delete();
+            db.Term.Delete();
+
             List<Document> docs = new List<Document>();
+            List<Term> terms = new List<Term>();
+            List<TermDoc> termDocs = new List<TermDoc>();
+
             DirectoryInfo root = new DirectoryInfo(@"G:\Mapper\enron_dataset\maildir\allen-p\");
             List<FileInfo> files = Crawl(root).ToList();
-            SortedDictionary<string, List<TermLocation>> index = new SortedDictionary<string, List<TermLocation>>();
+
             using (ProgressBar progress = new ProgressBar(files.Count, "Reading files"))
             {
                 foreach (FileInfo file in files)
                 {
-                    //// Perhaps change below to a stored procedure later on
+                    // Perhaps change below to a stored procedure later on
                     //if (!db.Document.Any(d => d.Path == file.FullName))
                     //{
                     //    db.Document.Insert(() => new Document()
@@ -56,18 +62,17 @@ namespace Indexer
                         int lineNumber = 0;
                         while (!sr.EndOfStream)
                         {
-                            TermLocation loc = new TermLocation { Path = file.FullName, LineNumber = lineNumber++ };
-                            string[] terms = sr.ReadLine().Split(' ');
-                            foreach (string term in terms)
+                            string[] lineTerms = sr.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            int wordNumber = 0;
+                            foreach (string term in lineTerms)
                             {
-                                if (index.ContainsKey(term))
+                                Term t = new Term() { Value = term };
+                                if (!terms.Contains(t))
                                 {
-                                    index[term].Add(loc);
+                                    terms.Add(t);
                                 }
-                                else
-                                {
-                                    index.Add(term, new List<TermLocation> { loc });
-                                }
+
+                                termDocs.Add(new TermDoc() { TermId = t.Value, LineNumber = lineNumber, LinePosition = wordNumber, DocumentPath = file.FullName, Id = Guid.NewGuid().ToString() });
                             }
                         }
                     }
@@ -76,46 +81,36 @@ namespace Indexer
                 }
             }
 
-            using (ProgressBar progress = new ProgressBar(docs.Count, "Uploading"))
+            using (ProgressBar progress = new ProgressBar(docs.Count, "Uploading docs"))
             {
                 db.BulkCopy(new BulkCopyOptions()
                 {
                     NotifyAfter = 100,
-                    RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int)r.RowsCopied,null)
+                    RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int)r.RowsCopied, null)
                 }, docs);
+                progress.Tick(progress.MaxTicks);
+            }
+            using (ProgressBar progress = new ProgressBar(terms.Count, "Uploading terms"))
+            {
+                db.BulkCopy(new BulkCopyOptions()
+                {
+                    NotifyAfter = 100,
+                    RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int)r.RowsCopied, null)
+                }, terms);
+                progress.Tick(progress.MaxTicks);
             }
 
-            //Console.WriteLine(index.Count);
-            //while (true)
-            //{
-            //    string search = Console.ReadLine();
-            //    if (index.TryGetValue(search, out List<TermLocation> locs))
-            //    {
-            //        foreach (TermLocation loc in locs)
-            //        {
-            //            Console.WriteLine($"{loc.Path}@{loc.LineNumber}");
-            //        }
-            //    }
-            //    else
-            //    {
-            //        foreach ((string term, List<TermLocation> locS) in index)
-            //        {
-            //            if (term.Contains(search))
-            //            {
-            //                foreach (TermLocation loc in locS)
-            //                {
-            //                    Console.WriteLine($"{loc.Path}@{loc.LineNumber}");
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-        }
+            using (ProgressBar progress = new ProgressBar(termDocs.Count, "Uploading docterms"))
+            {
+                db.BulkCopy(new BulkCopyOptions()
+                {
+                    NotifyAfter = 100,
+                    RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int)r.RowsCopied, null)
+                }, termDocs);
+                progress.Tick(progress.MaxTicks);
+            }
 
-        private struct TermLocation
-        {
-            public string Path;
-            public int LineNumber;
+
         }
     }
 }
