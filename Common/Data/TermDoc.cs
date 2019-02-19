@@ -1,4 +1,5 @@
 ﻿using LinqToDB.Mapping;
+using System;
 
 namespace Common.Data
 {
@@ -6,7 +7,7 @@ namespace Common.Data
     public class TermDoc
     {
         [PrimaryKey, Column(Name = "fldId"), NotNull]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         [Column(Name = "fldDocUrl"), NotNull]
         public string DocumentPath { get; set; }

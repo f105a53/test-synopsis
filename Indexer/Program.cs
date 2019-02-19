@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Indexer
 {
@@ -39,7 +40,7 @@ namespace Indexer
             db.Term.Delete();
 
             List<Document> docs = new List<Document>();
-            List<Term> terms = new List<Term>();
+            HashSet<string> terms = new HashSet<string>();
             List<TermDoc> termDocs = new List<TermDoc>();
 
             DirectoryInfo root = new DirectoryInfo(@"G:\Mapper\enron_dataset\maildir\allen-p\");
@@ -62,24 +63,21 @@ namespace Indexer
                         int lineNumber = 0;
                         while (!sr.EndOfStream)
                         {
-                            string[] lineTerms = sr.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            string[] lineTerms = sr.ReadLine().Split(new char[0], StringSplitOptions.RemoveEmptyEntries).Select(s=> s.ToLowerInvariant()).ToArray();
                             int wordNumber = 0;
+                            lineNumber++;
                             foreach (string term in lineTerms)
                             {
-                                Term t = new Term() { Value = term };
-                                if (!terms.Contains(t))
-                                {
-                                    terms.Add(t);
-                                }
+                                terms.Add(term);
 
-                                termDocs.Add(new TermDoc() { TermId = t.Value, LineNumber = lineNumber, LinePosition = wordNumber, DocumentPath = file.FullName, Id = Guid.NewGuid().ToString() });
+                                termDocs.Add(new TermDoc() { TermId = term, LineNumber = lineNumber, LinePosition = wordNumber++, DocumentPath = file.FullName, Id = Guid.NewGuid() });
                             }
                         }
                     }
 
                     progress.Tick();
                 }
-            }
+            }            
 
             using (ProgressBar progress = new ProgressBar(docs.Count, "Uploading docs"))
             {
@@ -90,13 +88,15 @@ namespace Indexer
                 }, docs);
                 progress.Tick(progress.MaxTicks);
             }
+
+            var n = terms.OrderBy(s => s);
             using (ProgressBar progress = new ProgressBar(terms.Count, "Uploading terms"))
             {
                 db.BulkCopy(new BulkCopyOptions()
                 {
                     NotifyAfter = 100,
                     RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int)r.RowsCopied, null)
-                }, terms);
+                }, terms.Select(t=> new Term() { Value=t}).ToList());
                 progress.Tick(progress.MaxTicks);
             }
 
