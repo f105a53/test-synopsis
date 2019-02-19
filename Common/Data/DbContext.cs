@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using LinqToDB;
+﻿using LinqToDB;
+using LinqToDB.Data;
 
 namespace Common.Data
 {
-    public class DbContext : LinqToDB.Data.DataConnection
+    public class DbContext : DataConnection
 
     {
-        public DbContext() : base("Database") { }
+        public DbContext() : base("Database")
+        {
+        }
 
         public ITable<Document> Document => GetTable<Document>();
         public ITable<Term> Term => GetTable<Term>();
         public ITable<TermDoc> TermDoc => GetTable<TermDoc>();
-
     }
 }
