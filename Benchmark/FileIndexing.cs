@@ -13,6 +13,8 @@ namespace Benchmark
         [Params("data/1.")]
         public string path;
 
+        private List<char> whitespace;
+
         [Benchmark]
         public List<string> StreamReaderSplit()
         {
@@ -32,8 +34,23 @@ namespace Benchmark
             return list;
         }
 
+        [GlobalSetup]
+        public void GlobalSetup()
+        {
+            var a = new List<char>();
+            for (int i = char.MinValue; i <= char.MaxValue; i++)
+            {
+                char c = Convert.ToChar(i);
+                if (!char.IsWhiteSpace(c))
+                {
+                    a.Add(c);
+                }
+            }
+            whitespace = a;
+        }
+
         [Benchmark]
-        public List<string> StreamReaderSlice()
+        public List<string> StreamReaderSliceCustom()
         {
             var list = new List<string>();
             using (StreamReader sr = new StreamReader(path))
@@ -50,6 +67,26 @@ namespace Benchmark
                         var term = line.Slice(index, newIndex - index);
                         list.Add(term.ToString());
                         index = newIndex + 1;
+                    }
+                }
+            }
+            return list;
+        }
+
+        [Benchmark]
+        public List<string> StreamReaderSlice3rdParty()
+        {
+            var w = whitespace.ToArray().AsSpan();
+            var list = new List<string>();
+            using (StreamReader sr = new StreamReader(path))
+            {
+
+                while (!sr.EndOfStream)
+                {
+                    var line = sr.ReadLine().AsSpan().Split(w);
+                    foreach (var word in line)
+                    {
+                        list.Add(word.ToString());
                     }
                 }
             }
