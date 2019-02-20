@@ -10,7 +10,7 @@ namespace Benchmark
     [RPlotExporter, RankColumn]
     public class FileIndexing
     {
-        [Params("data/1.")]
+        [Params("data/1")]
         public string path;
 
         private char[] whitespace;
