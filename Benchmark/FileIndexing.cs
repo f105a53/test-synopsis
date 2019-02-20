@@ -6,7 +6,6 @@ using BenchmarkDotNet.Attributes;
 
 namespace Benchmark
 {
-    [ClrJob(true)]
     [CoreJob]
     [RPlotExporter]
     [RankColumn]
