@@ -1,7 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <None Update="data/1." CopyToOutputDirectory="PreserveNewest" />
+
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Indexer\Indexer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.11.4" />
   </ItemGroup>
 
   <PropertyGroup>

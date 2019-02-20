@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Security.Cryptography;
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
+
 
 namespace Benchmark
 {
@@ -6,7 +10,7 @@ namespace Benchmark
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            BenchmarkRunner.Run<FileIndexing>();
         }
     }
 }
