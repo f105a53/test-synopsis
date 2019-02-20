@@ -6,30 +6,25 @@ using BenchmarkDotNet.Attributes;
 
 namespace Benchmark
 {
-    [ClrJob(baseline: true), CoreJob]
-    [RPlotExporter, RankColumn]
+    [ClrJob(true)]
+    [CoreJob]
+    [RPlotExporter]
+    [RankColumn]
     public class FileIndexing
     {
-        [Params("data/1")]
-        public string path;
+        [Params("data/1")] public string path;
 
         private char[] whitespace;
 
         [Benchmark]
-        public List<string> StreamReaderSplit()
+        public List<string> FileReadAllTextSplit()
         {
             var list = new List<string>();
-            using (StreamReader sr = new StreamReader(path))
+            foreach (var line in File.ReadAllLines(path))
             {
-
-                while (!sr.EndOfStream)
-                {
-                    string[] lineTerms = sr.ReadLine().Split(new char[0], StringSplitOptions.RemoveEmptyEntries).Select(s => s.ToLowerInvariant()).ToArray();
-                    foreach (string term in lineTerms)
-                    {
-                        list.Add(term);
-                    }
-                }
+                var lineTerms = line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.ToLowerInvariant()).ToArray();
+                foreach (var term in lineTerms) list.Add(term);
             }
             return list;
         }
@@ -40,13 +35,28 @@ namespace Benchmark
             var a = new List<char>();
             for (int i = char.MinValue; i <= char.MaxValue; i++)
             {
-                char c = Convert.ToChar(i);
-                if (!char.IsWhiteSpace(c))
+                var c = Convert.ToChar(i);
+                if (!char.IsWhiteSpace(c)) a.Add(c);
+            }
+
+            whitespace = a.ToArray();
+        }
+
+        [Benchmark]
+        public List<string> StreamReaderSlice3rdParty()
+        {
+            var w = new Span<char>(whitespace);
+            var list = new List<string>();
+            using (var sr = new StreamReader(path))
+            {
+                while (!sr.EndOfStream)
                 {
-                    a.Add(c);
+                    var line = sr.ReadLine().AsSpan().Split(w);
+                    foreach (var word in line) list.Add(word.ToString());
                 }
             }
-            whitespace = a.ToArray();
+
+            return list;
         }
 
         [Benchmark]
@@ -54,13 +64,12 @@ namespace Benchmark
         {
             var w = new Span<char>(whitespace);
             var list = new List<string>();
-            using (StreamReader sr = new StreamReader(path))
+            using (var sr = new StreamReader(path))
             {
-
                 while (!sr.EndOfStream)
                 {
                     var line = sr.ReadLine().AsSpan();
-                    int index = 0;
+                    var index = 0;
                     while (index < line.Length)
                     {
                         var newIndex = line.Slice(index).IndexOf(w);
@@ -71,26 +80,24 @@ namespace Benchmark
                     }
                 }
             }
+
             return list;
         }
 
         [Benchmark]
-        public List<string> StreamReaderSlice3rdParty()
+        public List<string> StreamReaderSplit()
         {
-            var w = new Span<char>(whitespace);
             var list = new List<string>();
-            using (StreamReader sr = new StreamReader(path))
+            using (var sr = new StreamReader(path))
             {
-
                 while (!sr.EndOfStream)
                 {
-                    var line = sr.ReadLine().AsSpan().Split(w);
-                    foreach (var word in line)
-                    {
-                        list.Add(word.ToString());
-                    }
+                    var lineTerms = sr.ReadLine().Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => s.ToLowerInvariant()).ToArray();
+                    foreach (var term in lineTerms) list.Add(term);
                 }
             }
+
             return list;
         }
     }
