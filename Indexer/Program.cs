@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Common.Data;
@@ -22,20 +23,11 @@ namespace Indexer
 
         private static void Main(string[] args)
         {
-            DataConnection.DefaultSettings = new LinqToDbSettings();
-            //LinqToDB.Data.DataConnection.TurnTraceSwitchOn();
-            //LinqToDB.Data.DataConnection.WriteTraceLine = (message, displayName) => { Console.WriteLine($"{message} {displayName}"); };
-
-            var db = new DbContext();
-            db.TermDoc.Delete();
-            db.Document.Delete();
-            db.Term.Delete();
-
             var docs = new List<Document>();
             var terms = new HashSet<string>();
             var termDocs = new List<TermDoc>();
 
-            var root = new DirectoryInfo(@"G:\Mapper\enron_dataset\maildir\allen-p\");
+            var root = new DirectoryInfo(@"../../../../Benchmark/data");
             var files = Crawl(root).ToList();
 
             using (var progress = new ProgressBar(files.Count, "Reading files"))
@@ -75,6 +67,16 @@ namespace Indexer
                     progress.Tick();
                 }
             }
+
+            Debugger.Break();
+
+            DataConnection.DefaultSettings = new LinqToDbSettings();
+            //LinqToDB.Data.DataConnection.TurnTraceSwitchOn();
+            //LinqToDB.Data.DataConnection.WriteTraceLine = (message, displayName) => { Console.WriteLine($"{message} {displayName}"); };
+            var db = new DbContext();
+            db.TermDoc.Delete();
+            db.Document.Delete();
+            db.Term.Delete();
 
             using (var progress = new ProgressBar(docs.Count, "Uploading docs"))
             {
