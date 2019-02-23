@@ -30,7 +30,7 @@ namespace Indexer
             var root = new DirectoryInfo(@"../../../../Benchmark/data");
             var files = Crawl(root).ToList();
 
-            using (var progress = new ProgressBar(files.Count, "Reading files"))
+            using (var progress = new ProgressBar(files.Count, $"Reading {root.FullName}"))
             {
                 foreach (var file in files)
                 {
@@ -47,11 +47,12 @@ namespace Indexer
                         var lineNumber = 0;
                         while (!sr.EndOfStream)
                         {
-                            var lineTerms = sr.ReadLine().Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
-                                .Select(s => s.ToLowerInvariant()).ToArray();
+                            var rawLine = sr.ReadLine();
+                            var line = rawLine.ToLowerInvariant();
+                            var words = line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
                             var wordNumber = 0;
                             lineNumber++;
-                            foreach (var term in lineTerms)
+                            foreach (var term in words)
                             {
                                 terms.Add(term);
 
@@ -68,7 +69,7 @@ namespace Indexer
                 }
             }
 
-            Debugger.Break();
+            return;
 
             DataConnection.DefaultSettings = new LinqToDbSettings();
             //LinqToDB.Data.DataConnection.TurnTraceSwitchOn();

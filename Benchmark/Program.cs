@@ -11,6 +11,7 @@ namespace Benchmark
         static void Main(string[] args)
         {
             BenchmarkRunner.Run<FileIndexing>();
+            //new FileIndexing() { path = "data/arnold-j" }.Pipelines().GetAwaiter().GetResult();
         }
     }
 }

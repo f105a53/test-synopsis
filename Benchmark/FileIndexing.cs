@@ -1,7 +1,11 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Pipelines;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 
 namespace Benchmark
@@ -9,6 +13,7 @@ namespace Benchmark
     [CoreJob]
     [RPlotExporter]
     [RankColumn]
+    [MemoryDiagnoser]
     public class FileIndexing
     {
         [Params("data/singlefile", "data/arnold-j")]
@@ -66,6 +71,66 @@ namespace Benchmark
             whitespace = a.ToArray();
         }
 
+        [Benchmark]
+        public async Task<List<string>> Pipelines()
+        {
+            var pipe = new Pipe();
+            var list = new List<string>();
+            var writing = PipelinesFill(pipe.Writer);
+            var reading = PipelinesRead(pipe.Reader, list);
+            await Task.WhenAll(writing, reading);
+            return list;
+        }
+
+        private async Task PipelinesFill(PipeWriter pipeWriter)
+        {
+            foreach (var fileInfo in GetFiles())
+                using (var stream = fileInfo.OpenRead())
+                {
+                    while (true)
+                    {
+                        var memory = pipeWriter.GetMemory();
+                        var bytesRead = await stream.ReadAsync(memory);
+                        if (bytesRead == 0) break;
+                        pipeWriter.Advance(bytesRead);
+                        await pipeWriter.FlushAsync();
+                    }
+                }
+
+            pipeWriter.Complete();
+        }
+
+        private async Task PipelinesRead(PipeReader reader, List<string> list)
+        {
+            while (true)
+            {
+                var result = await reader.ReadAsync();
+                var buffer = result.Buffer;
+                SequencePosition? position = null;
+
+                do
+                {
+                    // Look for a EOL in the buffer
+                    position = buffer.PositionOf((byte) ' ');
+
+                    if (position != null)
+                    {
+                        // Process the line
+                        list.Add(Encoding.UTF8.GetString(buffer.Slice(0, position.Value).ToArray()));
+
+                        // Skip the line + the \n character (basically position)
+                        buffer = buffer.Slice(buffer.GetPosition(1, position.Value));
+                    }
+                } while (position != null);
+
+                // Tell the PipeReader how much of the buffer we have consumed
+                reader.AdvanceTo(buffer.Start, buffer.End);
+
+                // Stop reading if there's no more data coming
+                if (result.IsCompleted) break;
+            }
+        }
+
         //[Benchmark]
         //public List<string> StreamReaderSlice3rdParty()
         //{
@@ -110,7 +175,7 @@ namespace Benchmark
             return list;
         }
 
-        [Benchmark]
+        [Benchmark(Baseline = true)]
         public List<string> StreamReaderSplit()
         {
             var list = new List<string>();
