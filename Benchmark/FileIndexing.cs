@@ -39,6 +39,15 @@ namespace Benchmark
             return list;
         }
 
+        [Benchmark]
+        public List<string> FileReadAllTextSplitLinq()
+        {
+            return (from file in GetFiles()
+                from line in File.ReadAllLines(file.FullName)
+                from term in line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
+                select term.ToLowerInvariant()).ToList();
+        }
+
         private IEnumerable<FileInfo> GetFiles()
         {
             return Crawl(new DirectoryInfo(path));
