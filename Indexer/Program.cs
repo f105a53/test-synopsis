@@ -1,12 +1,11 @@
-﻿using Common.Data;
-using LinqToDB;
-using LinqToDB.Data;
-using ShellProgressBar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using Common.Data;
+using LinqToDB;
+using LinqToDB.Data;
+using ShellProgressBar;
 
 namespace Indexer
 {
@@ -14,18 +13,11 @@ namespace Indexer
     {
         private static IEnumerable<FileInfo> Crawl(DirectoryInfo dir)
         {
-            foreach (FileInfo file in dir.EnumerateFiles())
-            {
-                yield return file;
-            }
+            foreach (var file in dir.EnumerateFiles()) yield return file;
 
-            foreach (DirectoryInfo d in dir.EnumerateDirectories())
-            {
-                foreach (FileInfo file in Crawl(d))
-                {
-                    yield return file;
-                }
-            }
+            foreach (var d in dir.EnumerateDirectories())
+            foreach (var file in Crawl(d))
+                yield return file;
         }
 
         private static void Main(string[] args)
@@ -34,21 +26,21 @@ namespace Indexer
             //LinqToDB.Data.DataConnection.TurnTraceSwitchOn();
             //LinqToDB.Data.DataConnection.WriteTraceLine = (message, displayName) => { Console.WriteLine($"{message} {displayName}"); };
 
-            DbContext db = new DbContext();
+            var db = new DbContext();
             db.TermDoc.Delete();
             db.Document.Delete();
             db.Term.Delete();
 
-            List<Document> docs = new List<Document>();
-            HashSet<string> terms = new HashSet<string>();
-            List<TermDoc> termDocs = new List<TermDoc>();
+            var docs = new List<Document>();
+            var terms = new HashSet<string>();
+            var termDocs = new List<TermDoc>();
 
-            DirectoryInfo root = new DirectoryInfo(@"G:\Mapper\enron_dataset\maildir\allen-p\");
-            List<FileInfo> files = Crawl(root).ToList();
+            var root = new DirectoryInfo(@"G:\Mapper\enron_dataset\maildir\allen-p\");
+            var files = Crawl(root).ToList();
 
-            using (ProgressBar progress = new ProgressBar(files.Count, "Reading files"))
+            using (var progress = new ProgressBar(files.Count, "Reading files"))
             {
-                foreach (FileInfo file in files)
+                foreach (var file in files)
                 {
                     // Perhaps change below to a stored procedure later on
                     //if (!db.Document.Any(d => d.Path == file.FullName))
@@ -56,61 +48,64 @@ namespace Indexer
                     //    db.Document.Insert(() => new Document()
                     //        {LastModified = file.LastWriteTimeUtc, Path = file.FullName});
                     //}
-                    docs.Add(new Document() { Path = file.FullName, LastModified = file.LastWriteTimeUtc });
+                    docs.Add(new Document {Path = file.FullName, LastModified = file.LastWriteTimeUtc});
 
-                    using (StreamReader sr = file.OpenText())
+                    using (var sr = file.OpenText())
                     {
-                        int lineNumber = 0;
+                        var lineNumber = 0;
                         while (!sr.EndOfStream)
                         {
-                            string[] lineTerms = sr.ReadLine().Split(new char[0], StringSplitOptions.RemoveEmptyEntries).Select(s=> s.ToLowerInvariant()).ToArray();
-                            int wordNumber = 0;
+                            var lineTerms = sr.ReadLine().Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
+                                .Select(s => s.ToLowerInvariant()).ToArray();
+                            var wordNumber = 0;
                             lineNumber++;
-                            foreach (string term in lineTerms)
+                            foreach (var term in lineTerms)
                             {
                                 terms.Add(term);
 
-                                termDocs.Add(new TermDoc() { TermId = term, LineNumber = lineNumber, LinePosition = wordNumber++, DocumentPath = file.FullName, Id = Guid.NewGuid() });
+                                termDocs.Add(new TermDoc
+                                {
+                                    TermId = term, LineNumber = lineNumber, LinePosition = wordNumber++,
+                                    DocumentPath = file.FullName, Id = Guid.NewGuid()
+                                });
                             }
                         }
                     }
 
                     progress.Tick();
                 }
-            }            
+            }
 
-            using (ProgressBar progress = new ProgressBar(docs.Count, "Uploading docs"))
+            using (var progress = new ProgressBar(docs.Count, "Uploading docs"))
             {
-                db.BulkCopy(new BulkCopyOptions()
+                db.BulkCopy(new BulkCopyOptions
                 {
                     NotifyAfter = 100,
-                    RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int)r.RowsCopied, null)
+                    RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int) r.RowsCopied, null)
                 }, docs);
                 progress.Tick(progress.MaxTicks);
             }
 
             var n = terms.OrderBy(s => s);
-            using (ProgressBar progress = new ProgressBar(terms.Count, "Uploading terms"))
+            using (var progress = new ProgressBar(terms.Count, "Uploading terms"))
             {
-                db.BulkCopy(new BulkCopyOptions()
+                db.BulkCopy(new BulkCopyOptions
                 {
                     NotifyAfter = 100,
-                    RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int)r.RowsCopied, null)
-                }, terms.Select(t=> new Term() { Value=t}).ToList());
+                    RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int) r.RowsCopied, null)
+                }, terms.Select(t => new Term {Value = t}).ToList());
                 progress.Tick(progress.MaxTicks);
             }
 
-            using (ProgressBar progress = new ProgressBar(termDocs.Count, "Uploading docterms"))
+            using (var progress = new ProgressBar(termDocs.Count, "Uploading docterms"))
             {
-                db.BulkCopy(new BulkCopyOptions()
+                db.BulkCopy(new BulkCopyOptions
                 {
                     NotifyAfter = 100,
-                    RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int)r.RowsCopied, null)
+                    RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int) r.RowsCopied, null)
                 }, termDocs);
                 progress.Tick(progress.MaxTicks);
             }
-
-
         }
     }
 }
