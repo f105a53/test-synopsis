@@ -150,7 +150,7 @@ namespace Benchmark
         //}
 
         [Benchmark]
-        public List<string> StreamReaderSliceCustom()
+        public List<string> StreamReaderSliceByLine()
         {
             var w = new Span<char>(whitespace);
             var list = new List<string>();
@@ -160,6 +160,32 @@ namespace Benchmark
                     while (!sr.EndOfStream)
                     {
                         var line = sr.ReadLine().AsSpan();
+                        var index = 0;
+                        while (index < line.Length)
+                        {
+                            var newIndex = line.Slice(index).IndexOf(w);
+                            if (newIndex < index) break;
+                            var term = line.Slice(index, newIndex - index);
+                            list.Add(term.ToString());
+                            index = newIndex + 1;
+                        }
+                    }
+                }
+
+            return list;
+        }
+
+        [Benchmark]
+        public List<string> StreamReaderSliceWholeFile()
+        {
+            var w = new Span<char>(whitespace);
+            var list = new List<string>();
+            foreach (var file in GetFiles())
+                using (var sr = new StreamReader(file.FullName))
+                {
+                    while (!sr.EndOfStream)
+                    {
+                        var line = sr.ReadToEnd().AsSpan();
                         var index = 0;
                         while (index < line.Length)
                         {
