@@ -14,10 +14,10 @@ namespace Benchmark
     [RPlotExporter]
     [RankColumn]
     [MemoryDiagnoser]
+    [ReturnValueValidator]
     public class FileIndexing
     {
-        [Params("data/arnold-j")]
-        public string path;
+        [Params("data/arnold-j")] public string path;
 
         private char[] whitespace;
 
@@ -25,8 +25,8 @@ namespace Benchmark
         {
             foreach (var file in dir.EnumerateFiles()) yield return file;
             foreach (var d in dir.EnumerateDirectories())
-                foreach (var file in Crawl(d))
-                    yield return file;
+            foreach (var file in Crawl(d))
+                yield return file;
         }
 
         [Benchmark]
@@ -34,12 +34,12 @@ namespace Benchmark
         {
             var list = new List<string>();
             foreach (var file in GetFiles())
-                foreach (var line in File.ReadAllLines(file.FullName))
-                {
-                    var lineTerms = line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
-                        .Select(s => s.ToLowerInvariant()).ToArray();
-                    foreach (var term in lineTerms) list.Add(term);
-                }
+            foreach (var line in File.ReadAllLines(file.FullName))
+            {
+                var lineTerms = line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.ToLowerInvariant()).ToArray();
+                foreach (var term in lineTerms) list.Add(term);
+            }
 
             return list;
         }
@@ -48,9 +48,9 @@ namespace Benchmark
         public List<string> FileReadAllTextSplitLinq()
         {
             return (from file in GetFiles()
-                    from line in File.ReadAllLines(file.FullName)
-                    from term in line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
-                    select term.ToLowerInvariant()).ToList();
+                from line in File.ReadAllLines(file.FullName)
+                from term in line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
+                select term.ToLowerInvariant()).ToList();
         }
 
         private IEnumerable<FileInfo> GetFiles()
@@ -111,7 +111,7 @@ namespace Benchmark
                 do
                 {
                     // Look for a EOL in the buffer
-                    position = buffer.PositionOf((byte)' ');
+                    position = buffer.PositionOf((byte) ' ');
 
                     if (position != null)
                     {
