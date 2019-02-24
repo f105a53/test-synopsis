@@ -1,5 +1,7 @@
 pipeline {
-  agent any
+      agent {
+        docker { image 'microsoft/dotnet:sdk' }
+    }
   stages {
     stage('Build') {
       steps {
@@ -9,8 +11,7 @@ pipeline {
     }
     stage('Benchmark') {
       steps {
-        sh '''cd Benchmark
-dotnet run -c Release'''
+        sh 'cd Benchmark; dotnet run -c Release'
       }
     }
   }
