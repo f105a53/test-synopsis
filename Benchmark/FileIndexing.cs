@@ -1,9 +1,9 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipelines;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
@@ -14,12 +14,10 @@ namespace Benchmark
     [RPlotExporter]
     [RankColumn]
     [MemoryDiagnoser]
-    [ReturnValueValidator]
+    //[ReturnValueValidator]
     public class FileIndexing
     {
-        [Params("data/arnold-j")] public string path;
-
-        private char[] whitespace;
+        private readonly IEnumerable<FileInfo> _files = Crawl(new DirectoryInfo("data/arnold-j"));
 
         private static IEnumerable<FileInfo> Crawl(DirectoryInfo dir)
         {
@@ -33,58 +31,31 @@ namespace Benchmark
         public List<string> FileReadAllTextSplit()
         {
             var list = new List<string>();
-            foreach (var file in GetFiles())
+            foreach (var file in _files)
             foreach (var line in File.ReadAllLines(file.FullName))
             {
-                var lineTerms = line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
-                    .Select(s => s.ToLowerInvariant()).ToArray();
-                foreach (var term in lineTerms) list.Add(term);
+                var lineTerms = line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+                list.AddRange(lineTerms);
             }
 
             return list;
         }
 
-        [Benchmark]
-        public List<string> FileReadAllTextSplitLinq()
-        {
-            return (from file in GetFiles()
-                from line in File.ReadAllLines(file.FullName)
-                from term in line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
-                select term.ToLowerInvariant()).ToList();
-        }
 
-        private IEnumerable<FileInfo> GetFiles()
-        {
-            return Crawl(new DirectoryInfo(path));
-        }
-
-        [GlobalSetup]
-        public void GlobalSetup()
-        {
-            var a = new List<char>();
-            for (int i = char.MinValue; i <= char.MaxValue; i++)
-            {
-                var c = Convert.ToChar(i);
-                if (!char.IsWhiteSpace(c)) a.Add(c);
-            }
-
-            whitespace = a.ToArray();
-        }
-
-        [Benchmark]
-        public async Task<List<string>> Pipelines()
+        //[Benchmark]
+        public List<string> Pipelines()
         {
             var pipe = new Pipe();
             var list = new List<string>();
             var writing = PipelinesFill(pipe.Writer);
             var reading = PipelinesRead(pipe.Reader, list);
-            await Task.WhenAll(writing, reading);
+            Task.WhenAll(writing, reading).GetAwaiter().GetResult();
             return list;
         }
 
         private async Task PipelinesFill(PipeWriter pipeWriter)
         {
-            foreach (var fileInfo in GetFiles())
+            foreach (var fileInfo in _files)
                 using (var stream = fileInfo.OpenRead())
                 {
                     while (true)
@@ -152,22 +123,25 @@ namespace Benchmark
         [Benchmark]
         public List<string> StreamReaderSliceByLine()
         {
-            var w = new Span<char>(whitespace);
             var list = new List<string>();
-            foreach (var file in GetFiles())
+            foreach (var file in _files)
                 using (var sr = new StreamReader(file.FullName))
                 {
                     while (!sr.EndOfStream)
                     {
-                        var line = sr.ReadLine().AsSpan();
+                        var text = sr.ReadLine().AsSpan();
                         var index = 0;
-                        while (index < line.Length)
+                        while (index < text.Length - 1)
                         {
-                            var newIndex = line.Slice(index).IndexOf(w);
-                            if (newIndex < index) break;
-                            var term = line.Slice(index, newIndex - index);
+                            var wordLength = 0;
+                            if (list.Count == 2103) Debugger.Break();
+                            while (char.IsWhiteSpace(text[index]) && index < text.Length - 1) index++;
+                            while (index + wordLength < text.Length && !char.IsWhiteSpace(text[index + wordLength]))
+                                wordLength++;
+                            if (wordLength == 0) continue;
+                            var term = text.Slice(index, wordLength);
                             list.Add(term.ToString());
-                            index = newIndex + 1;
+                            index += wordLength;
                         }
                     }
                 }
@@ -178,23 +152,22 @@ namespace Benchmark
         [Benchmark]
         public List<string> StreamReaderSliceWholeFile()
         {
-            var w = new Span<char>(whitespace);
             var list = new List<string>();
-            foreach (var file in GetFiles())
+            foreach (var file in _files)
                 using (var sr = new StreamReader(file.FullName))
                 {
-                    while (!sr.EndOfStream)
+                    var text = sr.ReadToEnd().AsSpan();
+                    var index = 0;
+                    while (index < text.Length - 1)
                     {
-                        var line = sr.ReadToEnd().AsSpan();
-                        var index = 0;
-                        while (index < line.Length)
-                        {
-                            var newIndex = line.Slice(index).IndexOf(w);
-                            if (newIndex < index) break;
-                            var term = line.Slice(index, newIndex - index);
-                            list.Add(term.ToString());
-                            index = newIndex + 1;
-                        }
+                        var wordLength = 0;
+                        while (char.IsWhiteSpace(text[index]) && index < text.Length - 1) index++;
+                        while (index + wordLength < text.Length && !char.IsWhiteSpace(text[index + wordLength]))
+                            wordLength++;
+                        if (wordLength == 0) continue;
+                        var term = text.Slice(index, wordLength);
+                        list.Add(term.ToString());
+                        index += wordLength;
                     }
                 }
 
@@ -205,14 +178,13 @@ namespace Benchmark
         public List<string> StreamReaderSplit()
         {
             var list = new List<string>();
-            foreach (var file in GetFiles())
+            foreach (var file in _files)
                 using (var sr = new StreamReader(file.FullName))
                 {
                     while (!sr.EndOfStream)
                     {
-                        var lineTerms = sr.ReadLine().Split(new char[0], StringSplitOptions.RemoveEmptyEntries)
-                            .Select(s => s.ToLowerInvariant()).ToArray();
-                        foreach (var term in lineTerms) list.Add(term);
+                        var lineTerms = sr.ReadLine().Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
+                        list.AddRange(lineTerms);
                     }
                 }
 

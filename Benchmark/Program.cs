@@ -1,20 +1,12 @@
-﻿using System;
-using System.Security.Cryptography;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
-
+﻿using BenchmarkDotNet.Running;
 
 namespace Benchmark
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
             BenchmarkRunner.Run<FileIndexing>();
-
-            //var fileIndexing = new FileIndexing() { path = "data/arnold-j" };
-            //fileIndexing.GlobalSetup();
-            //var result = fileIndexing.StreamReaderSliceWholeFile();
         }
     }
 }
