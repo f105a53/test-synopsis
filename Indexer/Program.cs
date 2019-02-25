@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Common.Data;
@@ -29,43 +28,53 @@ namespace Indexer
 
             var root = new DirectoryInfo(@"../../../../Benchmark/data");
             var files = Crawl(root).ToList();
+            var lastReport = DateTime.Now;
+            var size = 0L;
 
             using (var progress = new ProgressBar(files.Count, $"Reading {root.FullName}"))
             {
                 foreach (var file in files)
                 {
-                    // Perhaps change below to a stored procedure later on
-                    //if (!db.Document.Any(d => d.Path == file.FullName))
-                    //{
-                    //    db.Document.Insert(() => new Document()
-                    //        {LastModified = file.LastWriteTimeUtc, Path = file.FullName});
-                    //}
                     docs.Add(new Document {Path = file.FullName, LastModified = file.LastWriteTimeUtc});
-
-                    using (var sr = file.OpenText())
+                    using (var sr = new StreamReader(file.FullName))
                     {
-                        var lineNumber = 0;
-                        while (!sr.EndOfStream)
+                        var text = sr.ReadToEnd().AsSpan();
+                        var index = 0;
+                        while (index < text.Length - 1)
                         {
-                            var rawLine = sr.ReadLine();
-                            var line = rawLine.ToLowerInvariant();
-                            var words = line.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
-                            var wordNumber = 0;
-                            lineNumber++;
-                            foreach (var term in words)
-                            {
-                                terms.Add(term);
+                            var wordLength = 0;
+                            while (char.IsWhiteSpace(text[index]) && index < text.Length - 1) index++;
+                            while (index + wordLength < text.Length && !char.IsWhiteSpace(text[index + wordLength]))
+                                wordLength++;
+                            if (wordLength == 0) continue;
+                            var term = text.Slice(index, wordLength).ToString();
+                            terms.Add(term);
 
-                                termDocs.Add(new TermDoc
-                                {
-                                    TermId = term, LineNumber = lineNumber, LinePosition = wordNumber++,
-                                    DocumentPath = file.FullName, Id = Guid.NewGuid()
-                                });
-                            }
+                            termDocs.Add(new TermDoc
+                            {
+                                TermId = term,
+                                LineNumber = 0,
+                                LinePosition = 0,
+                                DocumentPath = file.FullName,
+                                Id = Guid.NewGuid()
+                            });
+                            index += wordLength;
                         }
                     }
 
-                    progress.Tick();
+                    var sinceLastReport = DateTime.Now - lastReport;
+                    if (sinceLastReport > TimeSpan.FromSeconds(1))
+                    {
+                        var speed = size / sinceLastReport.TotalSeconds / 1024 / 1024;
+                        progress.Tick($"Current speed: {speed}MB/s");
+                        lastReport = DateTime.Now;
+                        size = file.Length;
+                    }
+                    else
+                    {
+                        progress.Tick();
+                        size += file.Length;
+                    }
                 }
             }
 
