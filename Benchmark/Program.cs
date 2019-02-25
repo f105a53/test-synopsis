@@ -1,7 +1,4 @@
-﻿using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Jobs;
-using BenchmarkDotNet.Running;
-using BenchmarkDotNet.Toolchains.CsProj;
+﻿using BenchmarkDotNet.Running;
 
 namespace Benchmark
 {
@@ -9,8 +6,7 @@ namespace Benchmark
     {
         private static void Main()
         {
-            BenchmarkRunner.Run<FileIndexing>(
-                DefaultConfig.Instance.With(Job.Core.With(CsProjCoreToolchain.NetCoreApp22)));
+            BenchmarkRunner.Run<FileIndexing>();
         }
     }
 }
