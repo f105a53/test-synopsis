@@ -9,7 +9,8 @@ namespace Benchmark
     {
         private static void Main()
         {
-            BenchmarkRunner.Run<FileIndexing>();
+            BenchmarkRunner.Run<FileIndexing>(
+                DefaultConfig.Instance.With(Job.Core.With(CsProjCoreToolchain.NetCoreApp22)));
         }
     }
 }
