@@ -28,7 +28,7 @@ namespace Indexer
                 var terms = new HashSet<string>();
                 var termDocs = new List<TermDoc>();
 
-                var root = new DirectoryInfo(@"/home/jghz/maildir");
+                var root = new DirectoryInfo(@"/home/jghz/maildir/arnold-j");
                 var files = Crawl(root).ToList();
                 var lastReport = DateTime.Now;
                 var size = 0L;
@@ -51,7 +51,7 @@ namespace Indexer
                                 while (index + wordLength < text.Length && !char.IsWhiteSpace(text[index + wordLength]))
                                     wordLength++;
                                 if (wordLength == 0) continue;
-                                var term = text.Slice(index, wordLength).ToString();
+                                var term = text.Slice(index, wordLength).ToString().ToLowerInvariant();
                                 terms.Add(term);
 
                                 termDocs.Add(new TermDoc
@@ -104,7 +104,6 @@ namespace Indexer
                     progress.Tick(progress.MaxTicks);
                 }
 
-                var n = terms.OrderBy(s => s);
                 using (var progress = globalProgress.Spawn(terms.Count, "Uploading terms"))
                 {
                     db.BulkCopy(new BulkCopyOptions
