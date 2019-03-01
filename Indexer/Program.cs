@@ -116,11 +116,14 @@ namespace Indexer
 
                 using (var progress = globalProgress.Spawn(termDocs.Count, "Uploading docterms"))
                 {
-                    db.BulkCopy(new BulkCopyOptions
+                    var t = termDocs.AsEnumerable();
+                    while (termDocs.Count > 0)
                     {
-                        NotifyAfter = 100,
-                        RowsCopiedCallback = r => progress.Tick(progress.CurrentTick + (int) r.RowsCopied, null)
-                    }, termDocs);
+                        db.BulkCopy( t.Take(10000));
+                        t = t.Skip(10000);
+                        progress.Tick(progress.CurrentTick + 10000, null);
+                    }
+                    
                     progress.Tick(progress.MaxTicks);
                 }
             }
