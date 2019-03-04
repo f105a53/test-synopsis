@@ -1,26 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Common.Data;
 using Microsoft.AspNetCore.Mvc;
+using RestSharp;
 using Server.Models;
-using Server.Services;
 
 namespace Server.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly SearchService searchService;
+        private readonly RestClient client;
 
-        public HomeController(SearchService searchService) {
-            this.searchService = searchService;
+        public HomeController()
+        {
+            client = new RestClient("http://localhost:5000/api");
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
 
         [HttpPost]
-        public IActionResult Index([FromForm]string searchQuery) 
-{
-            return RedirectToAction(nameof(Search), new { q = searchQuery });
+        public async Task<IActionResult> Index([FromForm] string searchQuery)
+        {
+            return RedirectToAction(nameof(Search), new {q = searchQuery});
         }
 
         public IActionResult Index()
@@ -28,20 +35,17 @@ namespace Server.Controllers
             return View();
         }
 
-        public IActionResult Search([FromQuery]string q)
-        {
-            return View(searchService.GetResults(q));
-        }
-
         public IActionResult Privacy()
         {
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public async Task<IActionResult> Search([FromQuery] string q)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var r = new RestRequest("search", Method.GET, DataFormat.Json);
+            r.AddQueryParameter("q", q);
+            var restResponse = await client.ExecuteTaskAsync<List<TermDoc>>(r);
+            return View(restResponse.Data);
         }
     }
 }
