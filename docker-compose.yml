@@ -1,0 +1,13 @@
+version: "2"
+services:
+  server:
+    build: Server
+    labels:
+      traefik.frontend.rule: "Host: search.j2ghz.com"
+      traefik.enable: "true"
+      traefik.port: "443"
+  search-api:
+    build: SearchAPI
+  load-balancer:
+    build: LoadBalancer
+
