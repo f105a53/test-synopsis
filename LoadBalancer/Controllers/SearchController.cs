@@ -16,7 +16,7 @@ namespace LoadBalancer.Controllers
         public SearchController()
         {
             clients.AddLast(new RestClient("http://localhost:5000/api"));
-            clients.AddLast(new RestClient("http://localhost:5000/api"));
+            clients.AddLast(new RestClient("https://localhost:5001/api"));
         }
         [HttpGet]
         public async Task<List<TermDoc>> Search([FromQuery] string q)
