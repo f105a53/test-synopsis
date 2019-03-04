@@ -1,10 +1,6 @@
-﻿using Common.Data;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using LinqToDB;
-using LinqToDB.Data;
+using Common.Data;
 
 namespace Server.Services
 {
@@ -19,12 +15,10 @@ namespace Server.Services
 
         public List<TermDoc> GetResults(string term)
         {
-            if (db.Term.Contains(new Term { Value = term }))
+            lock (db)
             {
-                return db.TermDoc.Where(td => td.TermId == term).ToList();
-            }
-            else
-            {
+                if (db.Term.Contains(new Term {Value = term}))
+                    return db.TermDoc.Where(td => td.TermId == term).ToList();
                 return db.TermDoc.Where(td => td.TermId.Contains(term)).ToList();
             }
         }

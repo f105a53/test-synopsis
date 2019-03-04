@@ -10,19 +10,21 @@ namespace LoadBalancer.Controllers
     [ApiController]
     public class SearchController : ControllerBase
     {
-        private readonly LinkedList<RestClient> clients;
+        private readonly LinkedList<RestClient> clients = new LinkedList<RestClient>();
         private LinkedListNode<RestClient> current;
 
         public SearchController()
         {
             clients.AddLast(new RestClient("http://localhost:5000/api"));
             clients.AddLast(new RestClient("https://localhost:5001/api"));
+            current = clients.First;
         }
         [HttpGet]
         public async Task<List<TermDoc>> Search([FromQuery] string q)
         {
-            var client = current;
             current = current.Next ?? current.List.First;
+            var client = current;
+          
 
             var r = new RestRequest("search", Method.GET, DataFormat.Json);
             r.AddQueryParameter("q", q);

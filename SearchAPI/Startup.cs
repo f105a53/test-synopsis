@@ -30,7 +30,7 @@ namespace SearchAPI
         {
             DataConnection.DefaultSettings = new LinqToDbSettings();
             services.AddSingleton(new DbContext());
-            services.AddTransient<SearchService>();
+            services.AddSingleton<SearchService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
