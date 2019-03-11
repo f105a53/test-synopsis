@@ -16,8 +16,8 @@ namespace LoadBalancer.Controllers
 
         public SearchController()
         {
-            clients.AddLast(new RestClient("http://localhost:5000/api"));
-            clients.AddLast(new RestClient("https://localhost:5001/api"));
+            clients.AddLast(new RestClient("http://serach-api1/api"));
+            clients.AddLast(new RestClient("http://search-api2/api"));
             current = clients.First;
         }
 

@@ -15,7 +15,7 @@ namespace Server.Controllers
 
         public HomeController()
         {
-            client = new RestClient("http://localhost:5000/api");
+            client = new RestClient("http://load-balancer/api");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
