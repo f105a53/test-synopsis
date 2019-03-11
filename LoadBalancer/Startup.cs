@@ -29,7 +29,7 @@ namespace LoadBalancer
             Metrics.Collector = new CollectorConfiguration()
                 .Tag.With("host", Environment.GetEnvironmentVariable("COMPUTERNAME"))
                 .Batch.AtInterval(TimeSpan.FromSeconds(2))
-                .WriteTo.InfluxDB("https://influxdb.j2ghz.com", "DLS-Case-Search")
+                .WriteTo.InfluxDB("https://influxdb.j2ghz.com", "DLSCaseSearch")
                 .CreateCollector();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
