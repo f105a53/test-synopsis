@@ -1,13 +1,23 @@
 version: "2"
 services:
   server:
-    build: Server
+    build:
+      context: .
+      dockerfile: Dockerfile.Server
     labels:
       traefik.frontend.rule: "Host: search.j2ghz.com"
       traefik.enable: "true"
       traefik.port: "443"
-  search-api:
-    build: SearchAPI
+  search-api2:
+    build:
+      context: .
+      dockerfile: Dockerfile.SearchAPI
+  search-api1:
+    build:
+      context: .
+      dockerfile: Dockerfile.SearchAPI
   load-balancer:
-    build: LoadBalancer
+    build:
+      context: .
+      dockerfile: Dockerfile.LoadBalancer
 
