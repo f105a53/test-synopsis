@@ -7,7 +7,7 @@ services:
     labels:
       traefik.frontend.rule: "Host: search.j2ghz.com"
       traefik.enable: "true"
-      traefik.port: "443"
+      traefik.port: "80"
   search-api2:
     build:
       context: .
