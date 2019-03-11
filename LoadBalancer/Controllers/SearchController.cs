@@ -12,7 +12,7 @@ namespace LoadBalancer.Controllers
     [ApiController]
     public class SearchController : ControllerBase
     {
-        private readonly string[] servers = {"http://serach-api1/api", "http://search-api2/api"};
+        private readonly string[] servers = {"http://search-api1/api", "http://search-api2/api"};
         private readonly RestClient current;
 
         public SearchController()
