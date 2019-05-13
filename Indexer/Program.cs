@@ -32,17 +32,18 @@ namespace Indexer
                 Debug.WriteLine($"DB {displayName}: {message}");
             };
 
-            /*var db = new DbContext();
+            var db = new DbContext();
+            db.CommandTimeout = 600;
             db.TermDoc.Delete();
             db.Document.Delete();
-            db.Term.Delete();*/
+            db.Term.Delete();
 
             Console.WriteLine("Initializing");
-            var root = new DirectoryInfo(@"/home/jghz/maildir");
+            var root = new DirectoryInfo(@"C:\maildir");
             var lastReport = DateTime.Now;
             var size = 0L;
             var files = Crawl(root);
-            const int chunkSize = 1000;
+            const int chunkSize = 10;
 
             while (files.Any())
             {
@@ -104,11 +105,11 @@ namespace Indexer
                 }
 
                 Console.WriteLine($"Writing {docs.Count} Docs");
-                //db.BulkCopy( docs);
+                db.BulkCopy( docs);
                 Console.WriteLine($"Writing {terms.Count} Terms");
-                //db.BulkCopy(terms.Select(t => new Term {Value = t}).ToList());
+                db.BulkCopy(terms.Select(t => new Term {Value = t}).ToList());
                 Console.WriteLine($"Writing {termDocs.Count} TermDocs");
-                //db.BulkCopy(termDocs);
+                db.BulkCopy(termDocs);
                 count += (ulong)termDocs.Count;
                 Console.WriteLine(count);
             }

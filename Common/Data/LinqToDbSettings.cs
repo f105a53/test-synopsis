@@ -15,7 +15,7 @@ namespace Common.Data
                     {
                         Name = "DB_SearchEngine",
                         ProviderName = "SqlServer",
-                        ConnectionString = @"Server=mssql.jacobhinze.dk;Database=DB_SearchEngine;Enlist=False;User ID=mikkel;Password=eerrddff11,,;"
+                        ConnectionString = @"Server=mssql.jacobhinze.dk;Database=DB_SearchEngine;Enlist=False;User ID=hinz3;Password=public159753!;"
                     };
             }
         }
