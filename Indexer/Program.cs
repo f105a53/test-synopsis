@@ -22,6 +22,7 @@ namespace Indexer
         private static void Main(string[] args)
         {
             var existingTerms = new HashSet<string>();
+            var count = 0UL;
 
             Console.WriteLine("Wiping database");
             DataConnection.DefaultSettings = new LinqToDbSettings();
@@ -31,19 +32,22 @@ namespace Indexer
                 Debug.WriteLine($"DB {displayName}: {message}");
             };
 
-            var db = new DbContext();
+            /*var db = new DbContext();
             db.TermDoc.Delete();
             db.Document.Delete();
-            db.Term.Delete();
+            db.Term.Delete();*/
 
+            Console.WriteLine("Initializing");
             var root = new DirectoryInfo(@"/home/jghz/maildir");
             var lastReport = DateTime.Now;
             var size = 0L;
             var files = Crawl(root);
-            const int chunkSize = 10000;
+            const int chunkSize = 1000;
 
             while (files.Any())
             {
+                Console.WriteLine();
+                Console.WriteLine("Starting new part");
                 var part = files.Take(chunkSize);
                 files = files.Skip(chunkSize);
                 
@@ -99,13 +103,17 @@ namespace Indexer
                     }
                 }
 
-                Console.WriteLine("Writing Docs");
-                db.BulkCopy(new BulkCopyOptions(), docs);
-                Console.WriteLine("Writing Terms");
-                db.BulkCopy(terms.Select(t => new Term {Value = t}).ToList());
-                Console.WriteLine("Writing TermDocs");
-                db.BulkCopy(new BulkCopyOptions(){},termDocs);
+                Console.WriteLine($"Writing {docs.Count} Docs");
+                //db.BulkCopy( docs);
+                Console.WriteLine($"Writing {terms.Count} Terms");
+                //db.BulkCopy(terms.Select(t => new Term {Value = t}).ToList());
+                Console.WriteLine($"Writing {termDocs.Count} TermDocs");
+                //db.BulkCopy(termDocs);
+                count += (ulong)termDocs.Count;
+                Console.WriteLine(count);
             }
+            
         }
+       
     }
 }
