@@ -122,7 +122,7 @@ namespace Indexer
                             var part = partE.ToList();
                             db.BulkCopy(part);
                             count += part.Count;
-                            spinner.Text = $"Writing {data.Count} {typeof(T).Name}: count";
+                            spinner.Text = $"Writing {data.Count} {typeof(T).Name}: {count}";
                         }
                     }
                     catch (SqlException ex)
