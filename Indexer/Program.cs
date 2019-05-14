@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Common.Data;
+using Kurukuru;
 using LinqToDB;
 using LinqToDB.Data;
 
@@ -22,99 +23,94 @@ namespace Indexer
         private static void Main(string[] args)
         {
             var existingTerms = new HashSet<string>();
-            var count = 0UL;
 
-            Console.WriteLine("Wiping database");
             DataConnection.DefaultSettings = new LinqToDbSettings();
             DataConnection.TurnTraceSwitchOn();
-            DataConnection.WriteTraceLine = (message, displayName) =>
-            {
-                Debug.WriteLine($"DB {displayName}: {message}");
-            };
+            DataConnection.WriteTraceLine = (message, displayName) => Trace.WriteLine($"DB {displayName}: {message}");
 
             var db = new DbContext();
-            db.CommandTimeout = 600;
-            db.TermDoc.Delete();
-            db.Document.Delete();
-            db.Term.Delete();
 
-            Console.WriteLine("Initializing");
+            Spinner.Start("Wiping Database", spinner =>
+            {
+                db.CommandTimeout = 600;
+                spinner.Text = "Wiping TermDocs";
+                db.TermDoc.Delete();
+                spinner.Text = "Wiping Documents";
+                db.Document.Delete();
+                spinner.Text = "Wiping Terms";
+                db.Term.Delete();
+            });
+
             var root = new DirectoryInfo(@"C:\maildir");
-            var lastReport = DateTime.Now;
-            var size = 0L;
-            var files = Crawl(root);
-            const int chunkSize = 10;
+            var files = Crawl(root).ToList();
+            const int chunkSize = 1000;
 
             while (files.Any())
             {
-                Console.WriteLine();
-                Console.WriteLine("Starting new part");
+                var partStart = DateTime.Now;
                 var part = files.Take(chunkSize);
-                files = files.Skip(chunkSize);
-                
+                files = files.Skip(chunkSize).ToList();
+
                 var docs = new List<Document>();
                 var terms = new HashSet<string>();
                 var termDocs = new List<TermDoc>();
+                var size = 0L;
 
-                foreach (var file in part)
+                Spinner.Start("Processing part", spinner =>
                 {
-                    docs.Add(new Document {Path = file.FullName, LastModified = file.LastWriteTimeUtc});
-                    using (var sr = new StreamReader(file.FullName))
+                    foreach (var file in part)
                     {
-                        var text = sr.ReadToEnd().AsSpan();
-                        var index = 0;
-                        while (index < text.Length - 1)
+                        docs.Add(new Document {Path = file.FullName, LastModified = file.LastWriteTimeUtc});
+                        using (var sr = new StreamReader(file.FullName))
                         {
-                            var wordLength = 0;
-                            while (char.IsWhiteSpace(text[index]) && index < text.Length - 1) index++;
-                            while (index + wordLength < text.Length &&
-                                   !char.IsWhiteSpace(text[index + wordLength]))
-                                wordLength++;
-                            if (wordLength == 0) continue;
-                            var term = text.Slice(index, Math.Min(wordLength, 256)).ToString().ToLowerInvariant();
-                            if (!existingTerms.Contains(term))
+                            var text = sr.ReadToEnd().AsSpan();
+                            var index = 0;
+                            while (index < text.Length - 1)
                             {
-                                existingTerms.Add(term);
-                                terms.Add(term); 
+                                var wordLength = 0;
+                                while (char.IsWhiteSpace(text[index]) && index < text.Length - 1) index++;
+                                while (index + wordLength < text.Length &&
+                                       !char.IsWhiteSpace(text[index + wordLength]))
+                                    wordLength++;
+                                if (wordLength == 0) continue;
+                                var term = text.Slice(index, Math.Min(wordLength, 256)).ToString().ToLowerInvariant();
+                                if (!existingTerms.Contains(term))
+                                {
+                                    existingTerms.Add(term);
+                                    terms.Add(term);
+                                }
+
+                                termDocs.Add(new TermDoc
+                                {
+                                    TermId = term,
+                                    LineNumber = 0,
+                                    LinePosition = index,
+                                    DocumentPath = file.FullName,
+                                    Id = Guid.NewGuid()
+                                });
+                                index += wordLength;
                             }
-
-                            termDocs.Add(new TermDoc
-                            {
-                                TermId = term,
-                                LineNumber = 0,
-                                LinePosition = 0,
-                                DocumentPath = file.FullName,
-                                Id = Guid.NewGuid()
-                            });
-                            index += wordLength;
                         }
-                    }
 
-                    var sinceLastReport = DateTime.Now - lastReport;
-                    if (sinceLastReport > TimeSpan.FromSeconds(1))
-                    {
-                        var speed = size / sinceLastReport.TotalSeconds / 1024 / 1024;
-                        Console.WriteLine($"Current speed: {speed:F1}MB/s ({size}B in {sinceLastReport.TotalSeconds}s)");
-                        lastReport = DateTime.Now;
-                        size = file.Length;
-                    }
-                    else
-                    {
                         size += file.Length;
                     }
-                }
 
-                Console.WriteLine($"Writing {docs.Count} Docs");
-                db.BulkCopy( docs);
-                Console.WriteLine($"Writing {terms.Count} Terms");
-                db.BulkCopy(terms.Select(t => new Term {Value = t}).ToList());
-                Console.WriteLine($"Writing {termDocs.Count} TermDocs");
-                db.BulkCopy(termDocs);
-                count += (ulong)termDocs.Count;
-                Console.WriteLine(count);
+                    var sincePartStart = DateTime.Now - partStart;
+                    var speed = size / sincePartStart.TotalSeconds / 1024 / 1024;
+                    spinner.Succeed($"Finished part: {speed:F3}MB/s ({size}B in {sincePartStart.TotalSeconds:F3}s)");
+                });
+
+
+                SendToDb(db, docs);
+                SendToDb(db, terms.Select(t => new Term {Value = t}).ToList());
+                SendToDb(db, termDocs);
             }
-            
         }
-       
+
+        private static void SendToDb<T>(DbContext db, ICollection<T> data) where T : class
+        {
+            Spinner.Start($"Writing {data.Count} {typeof(T).Name}",
+                () => db.BulkCopy(data));
+        }
     }
 }

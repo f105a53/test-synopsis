@@ -15,7 +15,7 @@ namespace Common.Data
                     {
                         Name = "DB_SearchEngine",
                         ProviderName = "SqlServer",
-                        ConnectionString = @"Server=mssql.jacobhinze.dk;Database=DB_SearchEngine;Enlist=False;User ID=hinz3;Password=public159753!;"
+                        ConnectionString = @"Server=tcp:dls-case-search.database.windows.net,1433;Initial Catalog=DB_SearchEngine;Persist Security Info=False;User ID=hinz3;Password=public159753!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
                     };
             }
         }
