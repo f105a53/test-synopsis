@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,7 @@ using Common.Data;
 using Kurukuru;
 using LinqToDB;
 using LinqToDB.Data;
+using MoreLinq;
 
 namespace Indexer
 {
@@ -110,7 +112,26 @@ namespace Indexer
         private static void SendToDb<T>(DbContext db, ICollection<T> data) where T : class
         {
             Spinner.Start($"Writing {data.Count} {typeof(T).Name}",
-                () => db.BulkCopy(data));
+                spinner =>
+                {
+                    var count = 0;
+                    try
+                    {
+                        foreach (var partE in data.Batch(100000))
+                        {
+                            var part = partE.ToList();
+                            db.BulkCopy(part);
+                            count += part.Count;
+                            spinner.Text = $"Writing {data.Count} {typeof(T).Name}: count";
+                        }
+                    }
+                    catch (SqlException ex)
+                    {
+                        Debugger.Break();
+                        Console.Error.WriteLine(ex);
+                        spinner.Fail();
+                    }
+                });
         }
     }
 }
