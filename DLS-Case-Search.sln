@@ -16,9 +16,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmark", "Benchmark\Benchmark.csproj", "{AED4CC74-B361-4DE0-97A8-587C515CC8C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchAPI", "SearchAPI\SearchAPI.csproj", "{AB7E16EC-64AD-44BC-A092-89E14305EB47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchAPI", "SearchAPI\SearchAPI.csproj", "{AB7E16EC-64AD-44BC-A092-89E14305EB47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadBalancer", "LoadBalancer\LoadBalancer.csproj", "{7770A265-0EA4-4DF8-84AF-A713B5F4C85F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoadBalancer", "LoadBalancer\LoadBalancer.csproj", "{7770A265-0EA4-4DF8-84AF-A713B5F4C85F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuceneIndexer", "LuceneIndexer\LuceneIndexer.csproj", "{0405F918-DDEE-4596-87CB-DBCA6FF3C366}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,10 @@ Global
 		{7770A265-0EA4-4DF8-84AF-A713B5F4C85F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7770A265-0EA4-4DF8-84AF-A713B5F4C85F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7770A265-0EA4-4DF8-84AF-A713B5F4C85F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0405F918-DDEE-4596-87CB-DBCA6FF3C366}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0405F918-DDEE-4596-87CB-DBCA6FF3C366}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0405F918-DDEE-4596-87CB-DBCA6FF3C366}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0405F918-DDEE-4596-87CB-DBCA6FF3C366}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
