@@ -10,6 +10,7 @@ using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using MimeKit;
 using MoreLinq;
@@ -58,16 +59,19 @@ namespace LuceneIndexer
                         try
                         {
                             var email = await MimeMessage.LoadAsync(file.FullName);
+                            var fields = new List<IIndexableField>
+                            {
+                                new StringField("path", file.FullName, Field.Store.YES),
+                                new Int64Field("Date", email.Date.Ticks, Field.Store.YES),
+                                new TextField("Subject", email.Subject, Field.Store.YES)
+                            };
+                            fields.AddRange(email.To.Select(address =>
+                                new StringField("To", address.ToString(), Field.Store.YES)));
+                            fields.AddRange(email.To.Select(address =>
+                                new StringField("From", address.ToString(), Field.Store.YES)));
+                            fields.Add(new TextField("Body", email.TextBody, Field.Store.NO));
                             var doc = new Document();
-
-                            doc.Add(new StringField("path", file.FullName, Field.Store.YES));
-                            doc.Add(new Int64Field("Date", email.Date.Ticks, Field.Store.YES));
-                            doc.Add(new TextField("Subject", email.Subject, Field.Store.YES));
-                            foreach (var address in email.To)
-                                doc.AddStringField("To", address.ToString(), Field.Store.YES);
-                            foreach (var address in email.From)
-                                doc.AddStringField("From", address.ToString(), Field.Store.YES);
-                            doc.Add(new TextField("Body", email.TextBody, Field.Store.NO));
+                            doc.Fields.AddRange(fields);
                             writer.AddDocument(doc);
                             size += file.Length.Bytes();
                         }
