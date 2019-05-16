@@ -56,7 +56,7 @@ namespace LuceneIndexer
                     Console.WriteLine($"{hit.Score}");
                     foreach (var field in foundDoc.Fields)
                     {
-                        Console.WriteLine($"{field.Name}:\t{field}");
+                        Console.WriteLine($"{field.Name}:\t{field.GetStringValue() ?? field.GetInt64Value().ToString()}");
                     }
 
                     Console.WriteLine();
@@ -86,7 +86,7 @@ namespace LuceneIndexer
                                         new Int64Field("Date", email.Date.Ticks, Field.Store.YES),
                                         new TextField("Subject", email.Subject, Field.Store.YES)
                                 };
-                                fields.AddRange(email.To.Select(address =>
+                                fields.AddRange(email.From.Select(address =>
                                     new StringField("To", address.ToString(), Field.Store.YES)));
                                 fields.AddRange(email.To.Select(address =>
                                     new StringField("From", address.ToString(), Field.Store.YES)));
