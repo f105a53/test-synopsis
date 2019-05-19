@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Common.Data;
+using Common.Models;
 using InfluxDB.Collector;
 using Microsoft.AspNetCore.Mvc;
 using RestSharp;
@@ -23,7 +23,7 @@ namespace LoadBalancer.Controllers
         }
 
         [HttpGet]
-        public async Task<List<TermDoc>> Search([FromQuery] string q)
+        public async Task<SearchResults> Search([FromQuery] string q)
         {
             var restClient = current;
             //Report request
@@ -32,12 +32,12 @@ namespace LoadBalancer.Controllers
 
             var r = new RestRequest("search", Method.GET, DataFormat.Json);
             r.AddQueryParameter("q", q);
-            IRestResponse<List<TermDoc>> result;
+            IRestResponse<SearchResults> result;
             //Report request duration
             using (Metrics.Time("serverResponseTime",
                 new Dictionary<string, string> {{"server", restClient.BaseUrl.ToString()}}))
             {
-                result = await restClient.ExecuteTaskAsync<List<TermDoc>>(r);
+                result = await restClient.ExecuteTaskAsync<SearchResults>(r);
             }
 
             return result.Data;
