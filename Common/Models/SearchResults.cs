@@ -6,6 +6,6 @@ namespace Common.Models
 {
     public class SearchResults
     {
-        public List<(float, Email)> Results { get; set; }
+        public List<(float Score, Email Email)> Results { get; set; }
     }
 }
