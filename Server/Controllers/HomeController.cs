@@ -2,10 +2,10 @@
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Common.Data;
 using Microsoft.AspNetCore.Mvc;
 using RestSharp;
 using Server.Models;
+using Common.Models;
 
 namespace Server.Controllers
 {
@@ -44,7 +44,7 @@ namespace Server.Controllers
         {
             var r = new RestRequest("search", Method.GET, DataFormat.Json);
             r.AddQueryParameter("q", q);
-            var restResponse = await client.ExecuteTaskAsync<List<TermDoc>>(r);
+            var restResponse = await client.ExecuteTaskAsync<SearchResults>(r);
             return View(restResponse.Data);
         }
     }

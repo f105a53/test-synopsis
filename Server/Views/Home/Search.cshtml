@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Common.Data.TermDoc>
+﻿@model IEnumerable<Common.Models.SearchResults>
 
 @{
     ViewData["Title"] = "Search Result";
@@ -11,30 +11,27 @@
         <tr>
 
             <th>
-                @Html.DisplayNameFor(model => model.LineNumber)
+                Score
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LinePosition)
+                Path
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DocumentPath)
+                Subject
             </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LineNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LinePosition)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DocumentPath)
-                </td>
-            </tr>
+            @foreach (var result in item.Results)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => result.Item1)</td>
+                    <td>@Html.DisplayFor(modelItem => result.Item2.Path)</td>
+                    <td>@Html.DisplayFor(modelItem => result.Item2.Subject)</td>
+                </tr>
+            }
         }
     </tbody>
 </table>
