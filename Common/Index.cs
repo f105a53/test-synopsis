@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Models;
 using Humanizer;
 using Humanizer.Bytes;
 using Lucene.Net.Analysis;
@@ -51,7 +52,7 @@ namespace Common
         {
             var root = new DirectoryInfo(path);
 
-            var batches = Crawl(root).Batch(batchSize, r => r.Select(fi=>(fi.FullName,fi.Length)).ToList()).ToList();
+            var batches = Crawl(root).Batch(batchSize, r => r.Select(fi => (fi.FullName, fi.Length)).ToList()).ToList();
             var count = 0;
 
             foreach (var part in batches)
@@ -115,19 +116,40 @@ namespace Common
                 yield return file;
         }
 
+        private static InternetAddressList GetInternetAddressList(Document document, string fieldName)
+        {
+            return new InternetAddressList(document.GetFields(fieldName)
+                .Select(val => InternetAddress.Parse(ParserOptions.Default, val.GetStringValue())));
+        }
+
         /// <summary>
         ///     Searches the index for a given text. Text is parsed with <see cref="SimpleQueryParser" />
         /// </summary>
         /// <param name="searchText">User input to search for</param>
         /// <returns>Top 20 results as <see cref="TopDocs" /></returns>
-        public TopDocs Search(string searchText)
+        public SearchResults Search(string searchText)
         {
             using var reader = _indexWriter.GetReader(false);
             var searcher = new IndexSearcher(reader);
             var parser = new SimpleQueryParser(_analyzer,
                 new Dictionary<string, float> {{"Subject", 0.5f}, {"Body", 0.5f}});
             var query = parser.Parse(searchText);
-            return searcher.Search(query, 20);
+            var hits = searcher.Search(query, 20);
+            var results = from hit in hits.ScoreDocs
+                let document = searcher.Doc(hit.Doc)
+                let email = new Email
+                {
+                    From = GetInternetAddressList(document, "From"),
+                    To = GetInternetAddressList(document, "To"),
+                    Cc = GetInternetAddressList(document, "CC"),
+                    Bcc = GetInternetAddressList(document, "BCC"),
+                    Path = document.Get("path"),
+                    Date = new DateTimeOffset(document.GetField("Date").GetInt64Value() ?? 0, TimeSpan.Zero),
+                    Subject = document.Get("Subject")
+                }
+                select (hit.Score, email);
+
+            return new SearchResults {Results = results.ToList()};
         }
     }
 }
