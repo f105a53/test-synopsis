@@ -12,10 +12,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.SearchAPI
+    volumes:
+      - "./lucene-index:/app/lucene-index"
   search-api1:
     build:
       context: .
       dockerfile: Dockerfile.SearchAPI
+    volumes:
+      - "./lucene-index:/app/lucene-index"
   load-balancer:
     build:
       context: .
