@@ -39,7 +39,13 @@ namespace Common
         {
             _indexWriter?.Dispose();
         }
-
+        /// <summary>
+        /// Builds an index from the files in a given folder
+        /// </summary>
+        /// <param name="path">The path to folder to index</param>
+        /// <param name="batchSize">The size of a batch, after which the buffers are flushed</param>
+        /// <param name="progress">Returns progress messages, use <seealso cref="Progress{T}"/></param>
+        /// <returns></returns>
         public async Task Build(string path, int batchSize, IProgress<string> progress)
         {
             var root = new DirectoryInfo(path);
@@ -107,7 +113,11 @@ namespace Common
             foreach (var file in Crawl(d))
                 yield return file;
         }
-
+        /// <summary>
+        /// Searches the index for a given text. Text is parsed with <see cref="SimpleQueryParser"/>
+        /// </summary>
+        /// <param name="searchText">User input to search for</param>
+        /// <returns>Top 20 results as <see cref="TopDocs"/></returns>
         public TopDocs Search(string searchText)
         {
             using var reader = _indexWriter.GetReader(false);
