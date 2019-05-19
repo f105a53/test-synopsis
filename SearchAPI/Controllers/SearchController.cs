@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Common.Data;
 using Microsoft.AspNetCore.Mvc;
 using Server.Services;
+using Lucene.Net.Search;
 
 namespace SearchAPI.Controllers
 {
@@ -17,7 +17,7 @@ namespace SearchAPI.Controllers
         }
 
         [HttpGet]
-        public List<TermDoc> Search([FromQuery] string q)
+        public TopDocs Search([FromQuery] string q)
         {
             return searchService.GetResults(q);
         }
