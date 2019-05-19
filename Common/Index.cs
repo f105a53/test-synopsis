@@ -51,7 +51,7 @@ namespace Common
         {
             var root = new DirectoryInfo(path);
 
-            var batches = Crawl(root).Batch(batchSize, r => r.ToList()).ToList();
+            var batches = Crawl(root).Batch(batchSize, r => r.Select(fi=>(fi.FullName,fi.Length)).ToList()).ToList();
             var count = 0;
 
             foreach (var part in batches)
@@ -63,15 +63,15 @@ namespace Common
 
                 progress.Report($"Processing part {count}/{batches.Count}");
 
-                foreach (var file in part)
+                foreach (var (fullName, length) in part)
                     try
                     {
                         //Decode email
-                        var email = await MimeMessage.LoadAsync(file.FullName);
+                        var email = await MimeMessage.LoadAsync(fullName);
                         //Gather fields
                         var fields = new List<IIndexableField>
                         {
-                            new StringField("path", file.FullName, Field.Store.YES),
+                            new StringField("path", fullName, Field.Store.YES),
                             new Int64Field("Date", email.Date.Ticks, Field.Store.YES),
                             new TextField("Subject", email.Subject, Field.Store.YES)
                         };
@@ -91,11 +91,11 @@ namespace Common
                         doc.Fields.AddRange(fields);
                         _indexWriter.AddDocument(doc);
 
-                        size += file.Length.Bytes();
+                        size += length.Bytes();
                     }
                     catch (Exception e)
                     {
-                        progress.Report($"\nError while processing: {file.FullName}\n{e}\n");
+                        progress.Report($"\nError while processing: {fullName}\n{e}\n");
                     }
 
                 //At the end of the batch, flush changes to index
