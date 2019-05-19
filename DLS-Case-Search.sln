@@ -8,9 +8,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Indexer", "Indexer\Indexer.csproj", "{7915958B-186A-4E7F-82A0-79A0D191CF61}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F82B7FF8-F628-4509-A113-B4CC3AE22811}"
-	ProjectSection(SolutionItems) = preProject
-		DBSearchEngineScript.sql = DBSearchEngineScript.sql
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{50A3BDB8-CE77-49C4-A701-71CC503D3527}"
 EndProject
