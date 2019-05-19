@@ -12,7 +12,7 @@ namespace LoadBalancer.Controllers
     [ApiController]
     public class SearchController : ControllerBase
     {
-        private readonly string[] servers = {"http://search-api1/api", "http://search-api2/api"};
+        private readonly string[] servers = { "http://search-api1/api", "http://search-api2/api" };
         private readonly RestClient current;
 
         public SearchController()
@@ -28,14 +28,14 @@ namespace LoadBalancer.Controllers
             var restClient = current;
             //Report request
             Metrics.Increment("totalRequests", 1,
-                new Dictionary<string, string> {{"server", restClient.BaseUrl.ToString()}});
+                new Dictionary<string, string> { { "server", restClient.BaseUrl.ToString() } });
 
             var r = new RestRequest("search", Method.GET, DataFormat.Json);
             r.AddQueryParameter("q", q);
             IRestResponse<SearchResults> result;
             //Report request duration
             using (Metrics.Time("serverResponseTime",
-                new Dictionary<string, string> {{"server", restClient.BaseUrl.ToString()}}))
+                new Dictionary<string, string> { { "server", restClient.BaseUrl.ToString() } }))
             {
                 result = await restClient.ExecuteTaskAsync<SearchResults>(r);
             }
