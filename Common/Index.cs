@@ -50,7 +50,7 @@ namespace Common
                 var partStart = DateTime.Now;
                 var size = ByteSize.FromBits(0);
 
-                //$"Processing part {count}/{batches.Count}";
+                progress.Report($"Processing part {count}/{batches.Count}");
 
                 foreach (var file in part)
                     try
@@ -84,7 +84,7 @@ namespace Common
                     }
                     catch (Exception e)
                     {
-                        Console.Error.WriteLine($"\nError while processing: {file.FullName}\n{e}\n");
+                        progress.Report($"\nError while processing: {file.FullName}\n{e}\n");
                     }
 
                 //At the end of the batch, flush changes to index
@@ -92,7 +92,7 @@ namespace Common
                 //Report speed
                 var sincePartStart = DateTime.Now - partStart;
                 var speed = size.Per(sincePartStart);
-                //spinner.Succeed($"Finished part: {speed.Humanize("G03").PadLeft(11)}\t{size.Humanize("G03")}");
+                progress.Report($"Finished part: {speed.Humanize("G03").PadLeft(11)}\t{size.Humanize("G03")}");
             }
         }
 
