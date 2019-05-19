@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Common.Models;
 using Lucene.Net.Search;
 
 namespace Server.Services
@@ -13,7 +14,7 @@ namespace Server.Services
             this.index = index;
         }
 
-        public TopDocs  GetResults(string term)
+        public SearchResults GetResults(string term)
         {
             return index.Search(term);    
         }
