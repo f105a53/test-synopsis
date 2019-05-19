@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Humanizer;
 using Humanizer.Bytes;
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.QueryParsers.Simple;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -20,13 +22,15 @@ namespace Common
     public class Index : IDisposable
     {
         private const LuceneVersion AppLuceneVersion = LuceneVersion.LUCENE_48;
+        private readonly Analyzer _analyzer;
         private readonly IndexWriter _indexWriter;
 
         public Index(string indexPath)
         {
             //prepare lucene
             var dir = new MMapDirectory(indexPath, new NativeFSLockFactory());
-            var indexConfig = new IndexWriterConfig(AppLuceneVersion, new StandardAnalyzer(AppLuceneVersion));
+            _analyzer = new StandardAnalyzer(AppLuceneVersion);
+            var indexConfig = new IndexWriterConfig(AppLuceneVersion, _analyzer);
             _indexWriter = new IndexWriter(dir, indexConfig);
         }
 
@@ -104,11 +108,14 @@ namespace Common
                 yield return file;
         }
 
-        public TopDocs Search(string query)
+        public TopDocs Search(string searchText)
         {
             using var reader = _indexWriter.GetReader(false);
             var searcher = new IndexSearcher(reader);
-            return searcher.Search(new PhraseQuery {new Term("Body", query)}, 20);
+            var parser = new SimpleQueryParser(_analyzer,
+                new Dictionary<string, float> {{"Subject", 0.5f}, {"Body", 0.5f}});
+            var query = parser.Parse(searchText);
+            return searcher.Search(query, 20);
         }
     }
 }
