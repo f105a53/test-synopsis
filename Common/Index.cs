@@ -126,7 +126,7 @@ namespace Common
         ///     Searches the index for a given text. Text is parsed with <see cref="SimpleQueryParser" />
         /// </summary>
         /// <param name="searchText">User input to search for</param>
-        /// <returns>Top 20 results as <see cref="TopDocs" /></returns>
+        /// <returns>Top 20 results</returns>
         public SearchResults Search(string searchText)
         {
             using var reader = _indexWriter.GetReader(false);
