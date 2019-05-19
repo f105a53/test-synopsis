@@ -1,12 +1,10 @@
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipelines;
-using System.Text;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using Index = Common.Index;
 
 namespace Benchmark
 {
@@ -39,6 +37,12 @@ namespace Benchmark
             }
 
             return list;
+        }
+
+        [Benchmark]
+        public async Task LuceneIndex()
+        {
+            await new Index(Path.GetTempFileName() + ".d/").Build("data/arnold-j", 10000, new Progress<string>());
         }
 
         [Benchmark]
