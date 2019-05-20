@@ -14,7 +14,7 @@ namespace Server.Controllers
 
         public HomeController()
         {
-            _client = new RestClient("http://search-api/api").UseSerializer<JsonNetSerializer>();
+            _client = new RestClient("http://search-api/api").UseSerializer(() => new JsonNetSerializer());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
