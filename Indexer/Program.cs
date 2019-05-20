@@ -14,7 +14,7 @@ namespace Indexer
     {
         private static Common.Index indexer;
 
-        private static string path = @"C:\maildir\arnold-j";
+        private static string path = @"/mnt/zpool1/media/ipfs-export/maildir/arnold-j/";
         private static int batchSize = 10000;
         
 
