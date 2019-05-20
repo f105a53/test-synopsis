@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SearchAPI.Services;
 
 namespace SearchAPI
 {
@@ -27,6 +28,11 @@ namespace SearchAPI
         {
             services.AddControllers()
                 .AddNewtonsoftJson();
+
+            services.AddSingleton(new Common.Index(@"./lucene-index"));
+            services.AddSingleton<SearchService>();
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
