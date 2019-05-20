@@ -118,10 +118,9 @@ namespace Common
                 yield return file;
         }
 
-        private static InternetAddressList GetInternetAddressList(Document document, string fieldName)
+        private static string[] GetEmails(Document document, string fieldName)
         {
-            return new InternetAddressList(document.GetFields(fieldName)
-                .Select(val => InternetAddress.Parse(ParserOptions.Default, val.GetStringValue())));
+           return document.GetFields(fieldName).Select(f => f.GetStringValue()).ToArray();
         }
 
         /// <summary>
@@ -142,10 +141,10 @@ namespace Common
                 let document = searcher.Doc(hit.Doc)
                 let email = new Email
                 {
-                    From = GetInternetAddressList(document, "From"),
-                    To = GetInternetAddressList(document, "To"),
-                    Cc = GetInternetAddressList(document, "CC"),
-                    Bcc = GetInternetAddressList(document, "BCC"),
+                    From = GetEmails(document, "From"),
+                    To = GetEmails(document, "To"),
+                    Cc = GetEmails(document, "CC"),
+                    Bcc = GetEmails(document, "BCC"),
                     Path = document.Get("path"),
                     Date = new DateTimeOffset(document.GetField("Date").GetInt64Value() ?? 0, TimeSpan.Zero),
                     Subject = document.Get("Subject")
