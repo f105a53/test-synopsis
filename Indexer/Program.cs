@@ -14,7 +14,7 @@ namespace Indexer
     {
         private static Common.Index indexer;
 
-        private static string path = @"G:\Mapper\enron_dataset\maildir";
+        private static string path = @"C:\maildir\arnold-j";
         private static int batchSize = 10000;
         
 
