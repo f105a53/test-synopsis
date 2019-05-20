@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
+using Common;
 using Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using RestSharp;
@@ -12,25 +10,23 @@ namespace Server.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly RestClient client;
+        private readonly IRestClient _client;
 
         public HomeController()
         {
-            client = new RestClient("http://load-balancer/api");
+            _client = new RestClient("http://search-api/api").UseSerializer<JsonNetSerializer>();
         }
 
-        public async Task<IActionResult> Search([FromQuery] string q)
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
         {
-            var r = new RestRequest("search", Method.GET, DataFormat.Json);
-            r.AddQueryParameter("q", q);
-            var restResponse = await client.ExecuteTaskAsync<SearchResults>(r);
-            return View(restResponse.Data);
+            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
 
         [HttpPost]
         public async Task<IActionResult> Index([FromForm] string searchQuery)
         {
-            return RedirectToAction(nameof(Search), new { q = searchQuery });
+            return RedirectToAction(nameof(Search), new {q = searchQuery});
         }
 
         public IActionResult Index()
@@ -43,10 +39,12 @@ namespace Server.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public async Task<IActionResult> Search([FromQuery] string q)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var r = new RestRequest("search", Method.GET, DataFormat.Json);
+            r.AddQueryParameter("q", q);
+            var results = await _client.GetAsync<SearchResults>(r);
+            return View(results);
         }
     }
 }
