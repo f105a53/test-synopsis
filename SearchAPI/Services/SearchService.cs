@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Common.Models;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using Common.Models;
-using Lucene.Net.Search;
+using System.Threading.Tasks;
 
-namespace Server.Services
+namespace SearchAPI.Services
 {
     public class SearchService
     {
@@ -16,7 +17,7 @@ namespace Server.Services
 
         public SearchResults GetResults(string term)
         {
-            return index.Search(term);    
+            return index.Search(term);
         }
     }
 }
