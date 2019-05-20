@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace Common
             _analyzer = new StandardAnalyzer(AppLuceneVersion);
             var indexConfig = new IndexWriterConfig(AppLuceneVersion, _analyzer);
             _indexWriter = new IndexWriter(dir, indexConfig);
+            Debug.WriteLine($"Records in index: {_indexWriter.NumDocs}");
         }
 
 
@@ -99,8 +101,8 @@ namespace Common
                         progress.Report($"\nError while processing: {fullName}\n{e}\n");
                     }
 
-                //At the end of the batch, flush changes to index
-                _indexWriter.Flush(false, false);
+                //At the end of the batch, commit changes to index
+                _indexWriter.Commit();
                 //Report speed
                 var sincePartStart = DateTime.Now - partStart;
                 var speed = size.Per(sincePartStart);
@@ -134,6 +136,7 @@ namespace Common
             var parser = new SimpleQueryParser(_analyzer,
                 new Dictionary<string, float> {{"Subject", 0.5f}, {"Body", 0.5f}});
             var query = parser.Parse(searchText);
+            Debug.Assert(query != null,$"Query for {searchText} was null");
             var hits = searcher.Search(query, 20);
             var results = from hit in hits.ScoreDocs
                 let document = searcher.Doc(hit.Doc)
