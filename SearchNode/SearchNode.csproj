@@ -8,9 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Kurukuru" Version="1.1.0" />
-    <PackageReference Include="morelinq" Version="3.1.1" />
-    <PackageReference Include="ShellProgressBar" Version="4.2.0" />
+    <PackageReference Include="EasyNetQ" Version="3.5.0" />
   </ItemGroup>
 
   <ItemGroup>

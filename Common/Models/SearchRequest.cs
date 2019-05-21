@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Common.Models
 {
-    public class SearchResults<T>
+    public class SearchRequest
     {
-        public List<(float Score, T Result)> Results { get; set; }
+        public string Text { get; set; }
     }
 }

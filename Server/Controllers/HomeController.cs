@@ -1,20 +1,18 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
-using Common;
-using Common.Models;
 using Microsoft.AspNetCore.Mvc;
-using RestSharp;
 using Server.Models;
+using Server.Services;
 
 namespace Server.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IRestClient _client;
+        private readonly SearchService _searchService;
 
-        public HomeController()
+        public HomeController(SearchService searchService)
         {
-            _client = new RestClient("http://search-api/api").UseSerializer(() => new JsonNetSerializer());
+            _searchService = searchService;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -41,10 +39,8 @@ namespace Server.Controllers
 
         public async Task<IActionResult> Search([FromQuery] string q)
         {
-            var r = new RestRequest("search", Method.GET, DataFormat.Json);
-            r.AddQueryParameter("q", q);
-            var results = await _client.GetAsync<SearchResults>(r);
-            return View(results);
+            var searchResults = await _searchService.Search(q);
+            return View(searchResults);
         }
     }
 }
