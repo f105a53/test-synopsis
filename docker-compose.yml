@@ -8,20 +8,9 @@ services:
       traefik.frontend.rule: "Host: search.j2ghz.com"
       traefik.enable: "true"
       traefik.port: "80"
-  search-api2:
+  search-api:
     build:
       context: .
       dockerfile: Dockerfile.SearchAPI
     volumes:
       - "./lucene-index:/app/lucene-index"
-  search-api1:
-    build:
-      context: .
-      dockerfile: Dockerfile.SearchAPI
-    volumes:
-      - "./lucene-index:/app/lucene-index"
-  load-balancer:
-    build:
-      context: .
-      dockerfile: Dockerfile.LoadBalancer
-
