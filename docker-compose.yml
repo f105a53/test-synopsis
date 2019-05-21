@@ -9,7 +9,7 @@ services:
       traefik.enable: "true"
       traefik.port: "80"
     environment:
-      - RABBITMQ_CSTRING=host=localhost
+      - RABBITMQ_CSTRING=host=localhost;username=guest1;password=guest1
   search-node:
     build:
       context: .
@@ -17,15 +17,16 @@ services:
     volumes:
       - "./lucene-index:/app/lucene-index"
     environment:
-      - RABBITMQ_CSTRING=host=localhost
+      - RABBITMQ_CSTRING=host=localhost;username=guest1;password=guest1
   preview-service:
     build:
       context: .
       dockerfile: PreviewService/Dockerfile
     volumes:
       - "./lucene-index:/app/lucene-index"
+      - "/mnt/zpool1/media/ipfs-export/maildir:/mnt/zpool1/media/ipfs-export/maildir:ro"
     environment:
-      - RABBITMQ_CSTRING=host=localhost
+      - RABBITMQ_CSTRING=host=localhost;username=guest1;password=guest1
   rabbitmq:
     image: rabbitmq:3-management
     hostname: rabbitmq
