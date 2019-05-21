@@ -20,7 +20,8 @@ namespace SearchNode
             };
 
             using var index = new Index("./lucene-index");
-            using var bus = RabbitHutch.CreateBus("host=localhost");
+            using var bus =
+                RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost");
             bus.RespondAsync<SearchRequest, SearchResults<Email>>(request =>
                 Task.Factory.StartNew(() => index.Search(request.Text)));
             Console.WriteLine("Running...\nPress Ctrl+C to exit");

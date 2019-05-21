@@ -22,7 +22,7 @@ namespace PreviewService
             };
 
 
-            using var bus = RabbitHutch.CreateBus("host=localhost");
+            using var bus = RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost");
             bus.RespondAsync<ResultPreview.Request, ResultPreview>(async request =>
                 {
                     var previews = request.path.AsParallel().Select(async p =>

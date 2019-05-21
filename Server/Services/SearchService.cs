@@ -21,7 +21,7 @@ namespace Server.Services
         public async Task<SearchResults<Email>> Search(string searchText)
         {
             var searchResults =
-                await _bus.RequestAsync<SearchRequest, SearchResults<Email>>(new SearchRequest {Text = searchText});
+                await _bus.RequestAsync<SearchRequest, SearchResults<Common.Models.Email>>(new SearchRequest {Text = searchText});
             var paths = searchResults.Results.Select(r => r.Result.Path).ToArray();
             var request = new ResultPreview.Request {path = paths};
             var previews =

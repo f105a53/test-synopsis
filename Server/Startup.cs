@@ -1,3 +1,4 @@
+using System;
 using AutoMapper;
 using EasyNetQ;
 using Microsoft.AspNetCore.Builder;
@@ -66,7 +67,7 @@ namespace Server
 
             services.AddAutoMapper(typeof(Server.Startup).Assembly, typeof(Common.Models.Email).Assembly);
             Mapper.AssertConfigurationIsValid();
-            services.AddSingleton(RabbitHutch.CreateBus("host=localhost"));
+            services.AddSingleton(RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost"));
             services.AddSingleton<SearchService>();
         }
     }
