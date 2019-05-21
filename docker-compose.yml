@@ -8,18 +8,24 @@ services:
       traefik.frontend.rule: "Host: search.j2ghz.com"
       traefik.enable: "true"
       traefik.port: "80"
+    environment:
+      - RABBITMQ_CSTRING=host=localhost
   search-node:
     build:
       context: .
       dockerfile: SearchNode/Dockerfile
     volumes:
       - "./lucene-index:/app/lucene-index"
+    environment:
+      - RABBITMQ_CSTRING=host=localhost
   preview-service:
     build:
       context: .
       dockerfile: PreviewService/Dockerfile
     volumes:
       - "./lucene-index:/app/lucene-index"
+    environment:
+      - RABBITMQ_CSTRING=host=localhost
   rabbitmq:
     image: rabbitmq:3-management
     hostname: rabbitmq
@@ -28,4 +34,4 @@ services:
     volumes:
       - rabbitmq:/var/lib/rabbitmq
 volumes:
-  rabbit1:
+  rabbitmq:

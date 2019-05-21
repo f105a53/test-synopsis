@@ -20,8 +20,10 @@ namespace Server
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMapper mapper)
         {
+            mapper.ConfigurationProvider.AssertConfigurationIsValid();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -66,7 +68,7 @@ namespace Server
             services.AddRazorPages();
 
             services.AddAutoMapper(typeof(Server.Startup).Assembly, typeof(Common.Models.Email).Assembly);
-            Mapper.AssertConfigurationIsValid();
+            
             services.AddSingleton(RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost"));
             services.AddSingleton<SearchService>();
         }
