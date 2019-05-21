@@ -1,3 +1,4 @@
+using AutoMapper;
 using EasyNetQ;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -63,6 +64,8 @@ namespace Server
                 .AddNewtonsoftJson();
             services.AddRazorPages();
 
+            services.AddAutoMapper(typeof(Server.Startup).Assembly, typeof(Common.Models.Email).Assembly);
+            Mapper.AssertConfigurationIsValid();
             services.AddSingleton(RabbitHutch.CreateBus("host=localhost"));
             services.AddSingleton<SearchService>();
         }

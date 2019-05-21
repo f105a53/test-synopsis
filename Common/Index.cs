@@ -128,7 +128,7 @@ namespace Common
         /// </summary>
         /// <param name="searchText">User input to search for</param>
         /// <returns>Top 20 results</returns>
-        public SearchResults Search(string searchText)
+        public SearchResults<Email> Search(string searchText)
         {
             using var reader = _indexWriter.GetReader(false);
             var searcher = new IndexSearcher(reader);
@@ -151,7 +151,7 @@ namespace Common
                 }
                 select (hit.Score, email);
 
-            return new SearchResults {Results = results.ToList()};
+            return new SearchResults<Email> {Results = results.ToList()};
         }
     }
 }
