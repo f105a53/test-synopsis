@@ -6,7 +6,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 WORKDIR /src
 COPY . .
-WORKDIR "/src/Server"
+WORKDIR /src/Server
 RUN dotnet build "Server.csproj" -c Release -o /app
 
 FROM build AS publish
