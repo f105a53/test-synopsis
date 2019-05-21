@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Models;
 using EasyNetQ;
+using EasyNetQ.Logging;
 using MimeKit;
 
 namespace PreviewService
@@ -21,7 +22,7 @@ namespace PreviewService
                 exitEvent.Set();
             };
 
-
+            LogProvider.SetCurrentLogProvider(ConsoleLogProvider.Instance);
             using var bus = RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost");
             bus.RespondAsync<ResultPreview.Request, ResultPreview>(async request =>
                 {

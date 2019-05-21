@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Common.Models;
 using EasyNetQ;
+using EasyNetQ.Logging;
 using Index = Common.Index;
 
 namespace SearchNode
@@ -19,6 +20,7 @@ namespace SearchNode
                 exitEvent.Set();
             };
 
+            LogProvider.SetCurrentLogProvider(ConsoleLogProvider.Instance);
             using var index = new Index("./lucene-index");
             using var bus =
                 RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost");

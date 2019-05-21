@@ -1,11 +1,13 @@
 using System;
 using AutoMapper;
 using EasyNetQ;
+using EasyNetQ.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging.Debug;
 using Server.Services;
 
 namespace Server
@@ -68,7 +70,7 @@ namespace Server
             services.AddRazorPages();
 
             services.AddAutoMapper(typeof(Server.Startup).Assembly, typeof(Common.Models.Email).Assembly);
-            
+            LogProvider.SetCurrentLogProvider(ConsoleLogProvider.Instance);
             services.AddSingleton(RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost"));
             services.AddSingleton<SearchService>();
         }
