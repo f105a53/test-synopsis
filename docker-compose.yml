@@ -3,14 +3,29 @@ services:
   server:
     build:
       context: .
-      dockerfile: Dockerfile.Server
+      dockerfile: Server/Dockerfile
     labels:
       traefik.frontend.rule: "Host: search.j2ghz.com"
       traefik.enable: "true"
       traefik.port: "80"
-  search-api:
+  search-node:
     build:
       context: .
-      dockerfile: Dockerfile.SearchAPI
+      dockerfile: SearchNode/Dockerfile
     volumes:
       - "./lucene-index:/app/lucene-index"
+  preview-service:
+    build:
+      context: .
+      dockerfile: PreviewService/Dockerfile
+    volumes:
+      - "./lucene-index:/app/lucene-index"
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+    - "15672:15672"
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+volumes:
+  rabbit1:
