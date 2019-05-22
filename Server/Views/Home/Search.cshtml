@@ -1,28 +1,31 @@
-@using Humanizer;
-@model Common.Models.SearchResults<Email>
+@using Humanizer
+@model Search
 
 @{
     ViewData["Title"] = "Search Result";
 }
 
-<h1>Search (@Model.Results.Count results)</h1>
+<h1>Search (@Model.Emails.Results.Count results)</h1>
 
 <style>
     .result-container {
-        padding: 5px;
-        border-radius: 5px;
         background-color: rgba(0, 0, 0, 0.10);
-        box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.35);
+        border-radius: 5px;
+        box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.35);
+        padding: 5px;
         transition: 0.3s;
     }
 
-    .result-container:hover {
-        box-shadow: 0px 2px 15px 0px rgba(0,0,0,0.50);
-    }
+    .result-container:hover { box-shadow: 0px 2px 15px 0px rgba(0, 0, 0, 0.50); }
 </style>
 
 <div class="container-fluid">
-    @foreach (var (score, email) in Model.Results)
+    @foreach (var suggestion in Model.Suggestions)
+    {
+        <a asp-action="Search" asp-route-q="@suggestion">@suggestion</a>
+    }
+
+    @foreach (var (score, email) in Model.Emails.Results)
     {
         <!-- Entire "card" -->
         <div class="row result-container">
@@ -37,13 +40,13 @@
                     <div class="col-md-4">
                         <!-- to/from -->
                         <div class="row">
-                            <div class="col-md-12" style="display: flex; padding: 0px; margin: 0px;">
-                                <p style="padding: 0px; margin: 0px;">
+                            <div class="col-md-12" style="display: flex; margin: 0px; padding: 0px;">
+                                <p style="margin: 0px; padding: 0px;">
                                     From: @email.From.Humanize()
                                 </p>
                             </div>
-                            <div class="col-md-12" style="display: flex; padding: 0px; margin: 0px;">
-                                <p style="padding: 0px; margin: 0px;">
+                            <div class="col-md-12" style="display: flex; margin: 0px; padding: 0px;">
+                                <p style="margin: 0px; padding: 0px;">
                                     To: @email.To.Humanize()
                                 </p>
                             </div>
@@ -53,20 +56,20 @@
                 <!-- Path/Date row -->
                 <div class="row">
                     <!-- Path col -->
-                    <div class="col-md-8" style="padding-top: 0px; padding-bottom: 0px; margin: 0px;">
-                        <p style="padding-top: 0px; padding-bottom: 0px; margin: 0px; font-style: italic;">
+                    <div class="col-md-8" style="margin: 0px; padding-bottom: 0px; padding-top: 0px;">
+                        <p style="font-style: italic; margin: 0px; padding-bottom: 0px; padding-top: 0px;">
                             @email.Path
                         </p>
                     </div>
                     <!-- Date col -->
-                    <div class="col-md-4" style="padding: 0px; margin: 0px;">
-                        <p style="padding: 0px; margin: 0px;">
-                            Date: @email.Date.Humanize(null, null)
+                    <div class="col-md-4" style="margin: 0px; padding: 0px;">
+                        <p style="margin: 0px; padding: 0px;">
+                            Date: @email.Date.Humanize(null)
                         </p>
                     </div>
                 </div>
 
-                <hr />
+                <hr/>
                 <!-- Body preview row -->
                 <div class="row">
                     <div class="col-md-12" style="display: block;">
@@ -77,8 +80,8 @@
                 </div>
             </div>
         </div>
-        <br />
-        <br />
+        <br/>
+        <br/>
     }
 </div>
 
@@ -86,7 +89,7 @@
 <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#searchResult').DataTable();
     });
 </script>
