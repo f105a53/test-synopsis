@@ -35,7 +35,16 @@ namespace PublicAPI
             services.AddSingleton(RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost"));
             services.AddSingleton<SearchService>();
 
-            services.AddSwaggerDocument();
+            services.AddSwaggerDocument(config =>
+            {
+                config.PostProcess = document =>
+                {
+                    document.Info.Version = "v1";
+                    document.Info.Title = "Search Engine Public API";
+                    document.Info.Description = "A simple api for our search engine";
+                    document.Info.TermsOfService = "None";
+                };
+            });
 
         }
 
@@ -55,6 +64,8 @@ namespace PublicAPI
             }
 
             app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUi3();
 
             app.UseRouting();
 
@@ -65,7 +76,6 @@ namespace PublicAPI
                 endpoints.MapControllers();
             });
 
-            app.UseSwagger();
         }
     }
 }
