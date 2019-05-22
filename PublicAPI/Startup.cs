@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using PublicAPI.Services;
 using AutoMapper;
 using EasyNetQ;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace PublicAPI
 {
@@ -32,21 +31,11 @@ namespace PublicAPI
             services.AddControllers()
                 .AddNewtonsoftJson();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info
-                {
-                    Version = "v1",
-                    Title = "Search Engine Public API",
-                    Description = "Our public API for the search engine",
-                    TermsOfService = "None"
-                });
-            });
-
             services.AddAutoMapper(typeof(PublicAPI.Startup).Assembly, typeof(Common.Models.Email).Assembly);
             services.AddSingleton(RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost"));
             services.AddSingleton<SearchService>();
 
+            services.AddSwaggerDocument();
 
         }
 
@@ -67,13 +56,6 @@ namespace PublicAPI
 
             app.UseHttpsRedirection();
 
-            app.UseMvc();
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Public API V1");
-            });
-
             app.UseRouting();
 
             app.UseAuthorization();
@@ -82,6 +64,8 @@ namespace PublicAPI
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSwagger();
         }
     }
 }
