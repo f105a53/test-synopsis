@@ -13,7 +13,7 @@ namespace PublicAPI.Controllers
     public class SearchController : ControllerBase
     {
 
-        // GET: api/Search/5
+        // GET: api/Search/query
         [HttpGet("{query}", Name = "Get")]
         public SearchResults<Email> Get(string query)
         {
