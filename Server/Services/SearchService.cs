@@ -58,7 +58,10 @@ namespace Server.Services
                 return new SearchResults<Models.Email> {Results = emails.ToList()};
             });
 
-            var spellings = _bus.RequestAsync<Spellings.Request, Spellings>(new Spellings.Request {Text = searchText});
+            var spellings = Policies<Spellings>.Complete
+                .WrapAsync(Policy<Spellings>.Handle<TimeoutException>()
+                    .FallbackAsync(new Spellings {spellings = new string[0]})).ExecuteAsync(async () =>
+                    await _bus.RequestAsync<Spellings.Request, Spellings>(new Spellings.Request {Text = searchText}));
 
             await Task.WhenAll(results, spellings);
 

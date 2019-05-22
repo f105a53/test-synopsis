@@ -20,13 +20,21 @@
 </style>
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            Did you mean:&nbsp;@foreach (var suggestion in Model.Suggestions)
-            {<a asp-action="Search" asp-route-q="@suggestion" class="badge badge-secondary">@suggestion</a><text>&nbsp;</text>}
+    @if (Model.Suggestions.Any())
+    {
+        <div class="row">
+            <div class="col-md-12">
+                Did you mean:&nbsp;
+                @foreach (var suggestion in Model.Suggestions)
+                {
+                    <a asp-action="Search" asp-route-q="@suggestion" class="badge badge-secondary">@suggestion</a>
+                    <text>&nbsp;</text>
+                }
+            </div>
         </div>
-    </div>
-    <br />
+    }
+
+    <br/>
     @foreach (var (score, email) in Model.Emails.Results)
     {
         <!-- Entire "card" -->
