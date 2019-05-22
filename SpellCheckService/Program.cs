@@ -25,13 +25,12 @@ namespace SpellCheckService
                 exitEvent.Set();
             };
 
-            var dir = new MMapDirectory("./lucene-index", new NativeFSLockFactory());
-            var analyzer = new StandardAnalyzer(Index.AppLuceneVersion);
+            using var dir = new MMapDirectory("./lucene-index", new NativeFSLockFactory());
+            using var analyzer = new StandardAnalyzer(Index.AppLuceneVersion);
             var indexConfig = new IndexWriterConfig(Index.AppLuceneVersion, analyzer);
-            var indexWriter = new IndexWriter(dir, indexConfig);
-            Debug.WriteLine($"Records in index: {indexWriter.NumDocs}");
-            using var reader = indexWriter.GetReader(false);
-            var spellChecker = new SpellChecker(dir);
+            using var reader = DirectoryReader.Open(dir);
+            using var spellChecker = new SpellChecker(reader.Directory);
+            
             spellChecker.IndexDictionary(new LuceneDictionary(reader, "Body"), indexConfig, true);
 
             LogProvider.SetCurrentLogProvider(ConsoleLogProvider.Instance);
