@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using PublicAPI.Services;
 using AutoMapper;
 using EasyNetQ;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace PublicAPI
 {
@@ -34,6 +35,16 @@ namespace PublicAPI
             services.AddAutoMapper(typeof(PublicAPI.Startup).Assembly, typeof(Common.Models.Email).Assembly);
             services.AddSingleton(RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost"));
             services.AddSingleton<SearchService>();
+
+            services.AddMvc();
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new Info
+                {
+                    Version = "v1",
+                    Title = "Public API",
+                    Description = "Search Engine public API"
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +61,11 @@ namespace PublicAPI
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Public API V1");
+            });
 
             app.UseHttpsRedirection();
 
