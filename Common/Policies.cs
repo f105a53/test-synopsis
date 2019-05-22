@@ -17,9 +17,6 @@ namespace Common
         public static readonly IAsyncPolicy<T> Retry = Policy<T>.Handle<TimeoutException>()
             .WaitAndRetryAsync<T>(3, _=>100.Milliseconds());
 
-        public static IAsyncPolicy<T> Fallback(T defaultValue) =>
-            Policy<T>.Handle<TimeoutException>().FallbackAsync(defaultValue);
-
         public static readonly IAsyncPolicy<T> Complete = Policy.WrapAsync(Cache,Retry);
     }
 }

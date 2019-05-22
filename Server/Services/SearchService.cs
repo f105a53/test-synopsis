@@ -48,7 +48,12 @@ namespace Server.Services
                         previews.Results,
                         r => r.Result.Path,
                         r => r.path,
-                        old => (old.Score, _mapper.Map<Models.Email>(old.Result)),
+                        old =>
+                        {
+                            var n = _mapper.Map<Models.Email>(old.Result);
+                            n.Body = "Service not available";
+                            return (old.Score,n);
+                        },
                         (result, preview) =>
                         {
                             var email = _mapper.Map<Models.Email>(result.Result);
