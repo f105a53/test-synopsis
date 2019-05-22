@@ -32,19 +32,22 @@ namespace PublicAPI
             services.AddControllers()
                 .AddNewtonsoftJson();
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info
+                {
+                    Version = "v1",
+                    Title = "Search Engine Public API",
+                    Description = "Our public API for the search engine",
+                    TermsOfService = "None"
+                });
+            });
+
             services.AddAutoMapper(typeof(PublicAPI.Startup).Assembly, typeof(Common.Models.Email).Assembly);
             services.AddSingleton(RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost"));
             services.AddSingleton<SearchService>();
 
-            services.AddMvc();
-            services.AddSwaggerGen(c => {
-                c.SwaggerDoc("v1", new Info
-                {
-                    Version = "v1",
-                    Title = "Public API",
-                    Description = "Search Engine public API"
-                });
-            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,12 +65,14 @@ namespace PublicAPI
                 app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
+
+            app.UseMvc();
             app.UseSwagger();
-            app.UseSwaggerUI(c => {
+            app.UseSwaggerUI(c =>
+            {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Public API V1");
             });
-
-            app.UseHttpsRedirection();
 
             app.UseRouting();
 
