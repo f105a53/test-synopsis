@@ -20,11 +20,13 @@
 </style>
 
 <div class="container-fluid">
-    @foreach (var suggestion in Model.Suggestions)
-    {
-        <a asp-action="Search" asp-route-q="@suggestion">@suggestion</a>
-    }
-
+    <div class="row">
+        <div class="col-md-12">
+            Did you mean:&nbsp;@foreach (var suggestion in Model.Suggestions)
+            {<a asp-action="Search" asp-route-q="@suggestion" class="badge badge-secondary">@suggestion</a><text>&nbsp;</text>}
+        </div>
+    </div>
+    <br />
     @foreach (var (score, email) in Model.Emails.Results)
     {
         <!-- Entire "card" -->
