@@ -23,7 +23,7 @@ namespace Common
 {
     public class Index : IDisposable
     {
-        private const LuceneVersion AppLuceneVersion = LuceneVersion.LUCENE_48;
+        public const LuceneVersion AppLuceneVersion = LuceneVersion.LUCENE_48;
         private readonly Analyzer _analyzer;
         private readonly IndexWriter _indexWriter;
 
