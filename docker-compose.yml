@@ -1,6 +1,7 @@
 version: "2"
 services:
   server:
+    image: f105a53/search-web:server
     build:
       context: .
       dockerfile: Server/Dockerfile
@@ -9,16 +10,24 @@ services:
       traefik.enable: "true"
       traefik.port: "80"
     environment:
-      - RABBITMQ_CSTRING=host=localhost;username=guest1;password=guest1
+      RABBITMQ_CSTRING: "host=rabbitmq;username=guest1;password=guest1"
+    depends_on:
+      - rabbitmq
+      - search-node
+      - preview-service
   search-node:
+    image: f105a53/search-web:search-node
     build:
       context: .
       dockerfile: SearchNode/Dockerfile
     volumes:
       - "./lucene-index:/app/lucene-index"
     environment:
-      - RABBITMQ_CSTRING=host=localhost;username=guest1;password=guest1
+      RABBITMQ_CSTRING: "host=rabbitmq;username=guest1;password=guest1"
+    depends_on:
+      - rabbitmq
   preview-service:
+    image: f105a53/search-web:preview-service
     build:
       context: .
       dockerfile: PreviewService/Dockerfile
@@ -26,7 +35,9 @@ services:
       - "./lucene-index:/app/lucene-index"
       - "/mnt/zpool1/media/ipfs-export/maildir:/mnt/zpool1/media/ipfs-export/maildir:ro"
     environment:
-      - RABBITMQ_CSTRING=host=localhost;username=guest1;password=guest1
+      RABBITMQ_CSTRING: "host=rabbitmq;username=guest1;password=guest1"
+    depends_on:
+      - rabbitmq
   rabbitmq:
     image: rabbitmq:3-management
     hostname: rabbitmq
