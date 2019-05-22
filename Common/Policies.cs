@@ -14,6 +14,12 @@ namespace Common
         public static readonly IAsyncPolicy<T> Cache = Policy.CacheAsync<T>(new MemoryCacheProvider(new MemoryCache(new MemoryCacheOptions())),
             new SlidingTtl(5.Minutes()));
 
-        public static readonly IAsyncPolicy<T> Complete = Policy.WrapAsync(Cache);
+        public static readonly IAsyncPolicy<T> Retry = Policy<T>.Handle<TimeoutException>()
+            .WaitAndRetryAsync<T>(3, _=>100.Milliseconds());
+
+        public static IAsyncPolicy<T> Fallback(T defaultValue) =>
+            Policy<T>.Handle<TimeoutException>().FallbackAsync(defaultValue);
+
+        public static readonly IAsyncPolicy<T> Complete = Policy.WrapAsync(Cache,Retry);
     }
 }
