@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
-using EasyNetQ;
 using Common.Models;
+using EasyNetQ;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Email = PublicAPI.Models.Email;
 
 namespace PublicAPI.Services
 {

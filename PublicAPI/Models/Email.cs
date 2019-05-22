@@ -1,7 +1,7 @@
 ﻿using System;
 using AutoMapper;
 
-namespace Server.Models
+namespace PublicAPI.Models
 {
     public class Email
     {
