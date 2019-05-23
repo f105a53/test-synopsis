@@ -15,6 +15,23 @@ services:
       - rabbitmq
       - search-node
       - preview-service
+
+  public-api:
+    image: f105a53/search-web:public-api
+    build:
+      context: .
+      dockerfile: PublicAPI/Dockerfile
+    labels:
+      traefik.frontend.rule: "Host: search-api.j2ghz.com"
+      traefik.enable: "true"
+      traefik.port: "80"
+    environment:
+      RABBITMQ_CSTRING: "host=rabbitmq;username=guest1;password=guest1"
+    depends_on:
+      - rabbitmq
+      - search-node
+      - preview-service
+
   search-node:
     image: f105a53/search-web:search-node
     build:
@@ -26,6 +43,7 @@ services:
       RABBITMQ_CSTRING: "host=rabbitmq;username=guest1;password=guest1"
     depends_on:
       - rabbitmq
+
   preview-service:
     image: f105a53/search-web:preview-service
     build:
@@ -37,6 +55,7 @@ services:
       RABBITMQ_CSTRING: "host=rabbitmq;username=guest1;password=guest1"
     depends_on:
       - rabbitmq
+
   spell-check-service:
     image: f105a53/search-web:spell-check-service
     build:
@@ -48,6 +67,7 @@ services:
       RABBITMQ_CSTRING: "host=rabbitmq;username=guest1;password=guest1"
     depends_on:
       - rabbitmq
+
   rabbitmq:
     image: rabbitmq:3-management
     hostname: rabbitmq
@@ -55,5 +75,6 @@ services:
     - "15672:15672"
     volumes:
       - rabbitmq:/var/lib/rabbitmq
+      
 volumes:
   rabbitmq:
