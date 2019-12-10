@@ -5,17 +5,17 @@ VisualStudioVersion = 16.0.28606.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Indexer", "Indexer\Indexer.csproj", "{7915958B-186A-4E7F-82A0-79A0D191CF61}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{50A3BDB8-CE77-49C4-A701-71CC503D3527}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{2A45963E-AD47-441C-84AB-00CC1BF25FDE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchNode", "SearchNode\SearchNode.csproj", "{17D006AE-80D5-42C6-BBF6-A5BED08F3315}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreviewService", "PreviewService\PreviewService.csproj", "{6204C81F-0CC3-4E18-8BED-13C7E5F96825}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublicAPI", "PublicAPI\PublicAPI.csproj", "{71BFF2DF-E3C9-4089-9485-943C891B3B49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicAPI", "PublicAPI\PublicAPI.csproj", "{71BFF2DF-E3C9-4089-9485-943C891B3B49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpellCheckService", "SpellCheckService\SpellCheckService.csproj", "{DDC2D44C-0F87-404D-987F-56BFB034AEFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpellCheckService", "SpellCheckService\SpellCheckService.csproj", "{DDC2D44C-0F87-404D-987F-56BFB034AEFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{EFC12D46-6CEB-45A7-8274-DAB05D358A88}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +27,6 @@ Global
 		{7915958B-186A-4E7F-82A0-79A0D191CF61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7915958B-186A-4E7F-82A0-79A0D191CF61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7915958B-186A-4E7F-82A0-79A0D191CF61}.Release|Any CPU.Build.0 = Release|Any CPU
-		{50A3BDB8-CE77-49C4-A701-71CC503D3527}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50A3BDB8-CE77-49C4-A701-71CC503D3527}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50A3BDB8-CE77-49C4-A701-71CC503D3527}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50A3BDB8-CE77-49C4-A701-71CC503D3527}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2A45963E-AD47-441C-84AB-00CC1BF25FDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A45963E-AD47-441C-84AB-00CC1BF25FDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A45963E-AD47-441C-84AB-00CC1BF25FDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +47,10 @@ Global
 		{DDC2D44C-0F87-404D-987F-56BFB034AEFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDC2D44C-0F87-404D-987F-56BFB034AEFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDC2D44C-0F87-404D-987F-56BFB034AEFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFC12D46-6CEB-45A7-8274-DAB05D358A88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFC12D46-6CEB-45A7-8274-DAB05D358A88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFC12D46-6CEB-45A7-8274-DAB05D358A88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFC12D46-6CEB-45A7-8274-DAB05D358A88}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
