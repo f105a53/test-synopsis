@@ -25,7 +25,7 @@ namespace PreviewService.UnitTests.Services
 
             var searchResults = await previewService.GetResultPreview(new Core.Entities.ResultPreview.Request { path = new string[] { @"C:\temp\in.txt" } });
 
-            Assert.Equal((@"C:\temp\in.txt", expected), searchResults.Results[0]);
+            Assert.Matches(expected, searchResults.Results[0].body);
         }
 
         [Fact]
