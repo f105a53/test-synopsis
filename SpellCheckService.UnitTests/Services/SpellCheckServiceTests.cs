@@ -174,7 +174,7 @@ Fax:     503-886-0441
         
             #endregion
 
-            var tempPath = Path.GetTempPath() + Guid.NewGuid().ToString();
+            var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
             await IndexTestFiles(fakeFileInput, tempPath);
 
