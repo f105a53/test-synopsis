@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PreviewService.Console": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
