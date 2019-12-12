@@ -21,7 +21,7 @@ namespace SearchService.Console
 
             LogProvider.SetCurrentLogProvider(ConsoleLogProvider.Instance);
             var bus = RabbitHutch.CreateBus(Environment.GetEnvironmentVariable("RABBITMQ_CSTRING") ?? "host=localhost");
-            var service = new Core.Services.SearchService("./lucene-index");
+            var service = new SearchService.Core.Services.SearchService("./lucene-index");
 
             bus.RespondAsync<SearchRequest, SearchResults<Email>>(request =>
                 Task.Factory.StartNew(() => service.GetSearchResults(request)));

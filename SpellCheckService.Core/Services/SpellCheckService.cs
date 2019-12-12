@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using SystemInterface.IO;
 
 namespace SpellCheckService.Core.Services
 {
