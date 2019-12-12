@@ -24,7 +24,7 @@ namespace SearchService.UnitTests.Services
             var results = service.GetSearchResults(new Core.Entities.SearchRequest { Text = "deal" });
 
 
-            Assert.Matches("FW: SAP information for your proposal", results.Results[0].Result.Subject);
+            Assert.Matches(tempPath, results.Results[0].Result.Subject);
         }
 
         private async Task IndexTestFiles(string input, string path)
