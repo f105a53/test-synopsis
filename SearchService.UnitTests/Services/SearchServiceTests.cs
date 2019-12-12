@@ -66,9 +66,9 @@ namespace SearchService.UnitTests.Services
             {
                 var results = service.GetSearchResults(new Core.Entities.SearchRequest { Text = input });
                 if (shouldSucceed)
-                    Assert.Equal("FW: SAP information for your proposal", results.Results[0].Result.Subject);
+                    Assert.Matches("FW: SAP information for your proposal", results.Results[0].Result.Subject);
                 else
-                    Assert.NotEqual("FW: SAP information for your proposal", results.Results[0].Result.Subject);
+                    Assert.DoesNotMatch("FW: SAP information for your proposal", results.Results[0].Result.Subject);
             }
             catch
             {
