@@ -10,18 +10,24 @@ pipeline {
     stage('Unit Tests') {
       parallel {
 	      stage('Preview Service Unit Tests') {
-		     dir ('PreviewService.UnitTests') {
-			    sh 'dotnet test --configuration Release /p:AltCover=true  /p:AltCoverForce=true --logger "trx;logfilename=unit.trx" --results-directory TestResults/'
-			 }
+			steps {
+				dir ('PreviewService.UnitTests') {
+					sh 'dotnet test --configuration Release /p:AltCover=true  /p:AltCoverForce=true --logger "trx;logfilename=unit.trx" --results-directory TestResults/'
+				}
+			}
 		  }
 		  stage('Search Service Unit Tests') {
-			dir ('SearchService.UnitTests') {
-			   sh 'dotnet test --configuration Release /p:AltCover=true  /p:AltCoverForce=true --logger "trx;logfilename=unit.trx" --results-directory TestResults/'
+			steps {
+				dir ('SearchService.UnitTests') {
+					sh 'dotnet test --configuration Release /p:AltCover=true  /p:AltCoverForce=true --logger "trx;logfilename=unit.trx" --results-directory TestResults/'
+				}
 			}
 		  }
 		  stage('SpellCheck Service Unit Tests') {
-		    dir ('SpellCheckService.UnitTests') {
-				sh 'dotnet test --configuration Release /p:AltCover=true  /p:AltCoverForce=true --logger "trx;logfilename=unit.trx" --results-directory TestResults/'
+			steps {
+				dir ('SpellCheckService.UnitTests') {
+					sh 'dotnet test --configuration Release /p:AltCover=true  /p:AltCoverForce=true --logger "trx;logfilename=unit.trx" --results-directory TestResults/'
+				}
 			}
 		  }
 	   }
