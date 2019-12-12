@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lucene.Net.Suggest" Version="4.8.0-beta00005" />
+    <PackageReference Include="System.IO.Abstractions" Version="7.0.15" />
+    <PackageReference Include="SystemWrapper.Interfaces" Version="0.25.0.186" />
+    <PackageReference Include="SystemWrapper.Wrappers" Version="0.25.0.186" />
+  </ItemGroup>
+
+</Project>

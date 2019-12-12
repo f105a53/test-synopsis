@@ -19,7 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreviewService.Core", "Prev
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreviewService.UnitTests", "PreviewService.UnitTests\PreviewService.UnitTests.csproj", "{157AA470-1C11-4132-96CC-D5A79D68954C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PreviewService.Console", "PreviewService.Console\PreviewService.Console.csproj", "{929A4F37-69A4-43A0-84EB-51845AEC5D89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreviewService.Console", "PreviewService.Console\PreviewService.Console.csproj", "{929A4F37-69A4-43A0-84EB-51845AEC5D89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpellCheckService.Core", "SpellCheckService.Core\SpellCheckService.Core.csproj", "{59A7DF6A-D4DD-49ED-A531-97F5FDF08CC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpellCheckService.UnitTests", "SpellCheckService.UnitTests\SpellCheckService.UnitTests.csproj", "{0148333F-E9B5-41DD-871C-3715F351553B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpellCheckService.Console", "SpellCheckService.Console\SpellCheckService.Console.csproj", "{B1720244-2C56-423F-8689-9659E532F508}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +69,18 @@ Global
 		{929A4F37-69A4-43A0-84EB-51845AEC5D89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{929A4F37-69A4-43A0-84EB-51845AEC5D89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{929A4F37-69A4-43A0-84EB-51845AEC5D89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59A7DF6A-D4DD-49ED-A531-97F5FDF08CC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59A7DF6A-D4DD-49ED-A531-97F5FDF08CC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59A7DF6A-D4DD-49ED-A531-97F5FDF08CC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59A7DF6A-D4DD-49ED-A531-97F5FDF08CC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0148333F-E9B5-41DD-871C-3715F351553B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0148333F-E9B5-41DD-871C-3715F351553B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0148333F-E9B5-41DD-871C-3715F351553B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0148333F-E9B5-41DD-871C-3715F351553B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1720244-2C56-423F-8689-9659E532F508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1720244-2C56-423F-8689-9659E532F508}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1720244-2C56-423F-8689-9659E532F508}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1720244-2C56-423F-8689-9659E532F508}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
