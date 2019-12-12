@@ -17,19 +17,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreviewService.UnitTests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PreviewService.Console", "PreviewService.Console\PreviewService.Console.csproj", "{929A4F37-69A4-43A0-84EB-51845AEC5D89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpellCheckService.Core", "SpellCheckService.Core\SpellCheckService.Core.csproj", "{59A7DF6A-D4DD-49ED-A531-97F5FDF08CC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpellCheckService.Core", "SpellCheckService.Core\SpellCheckService.Core.csproj", "{59A7DF6A-D4DD-49ED-A531-97F5FDF08CC6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpellCheckService.UnitTests", "SpellCheckService.UnitTests\SpellCheckService.UnitTests.csproj", "{0148333F-E9B5-41DD-871C-3715F351553B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpellCheckService.UnitTests", "SpellCheckService.UnitTests\SpellCheckService.UnitTests.csproj", "{0148333F-E9B5-41DD-871C-3715F351553B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpellCheckService.Console", "SpellCheckService.Console\SpellCheckService.Console.csproj", "{B1720244-2C56-423F-8689-9659E532F508}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpellCheckService.Console", "SpellCheckService.Console\SpellCheckService.Console.csproj", "{B1720244-2C56-423F-8689-9659E532F508}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchService.Core", "SearchService.Core\SearchService.Core.csproj", "{B68A6E03-0C7A-40CD-9F59-CFF53D07F2E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchService.Core", "SearchService.Core\SearchService.Core.csproj", "{B68A6E03-0C7A-40CD-9F59-CFF53D07F2E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchService.UnitTests", "SearchService.UnitTests\SearchService.UnitTests.csproj", "{26FFE091-7755-44E8-8380-7FEECFD30AA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchService.UnitTests", "SearchService.UnitTests\SearchService.UnitTests.csproj", "{26FFE091-7755-44E8-8380-7FEECFD30AA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchService.Console", "SearchService.Console\SearchService.Console.csproj", "{4DD96219-0916-4DC7-B430-A19D0C674563}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SearchService.Console", "SearchService.Console\SearchService.Console.csproj", "{4DD96219-0916-4DC7-B430-A19D0C674563}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Tests", "Common.Tests\Common.Tests.csproj", "{1CCDD5FB-3638-44A9-B4AF-75FBA765068C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecFlow.Tests", "SpecFlow.Tests\SpecFlow.Tests.csproj", "{DE6F5921-BCE0-4A2F-ACDE-70095D5B3FCA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +95,10 @@ Global
 		{1CCDD5FB-3638-44A9-B4AF-75FBA765068C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CCDD5FB-3638-44A9-B4AF-75FBA765068C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CCDD5FB-3638-44A9-B4AF-75FBA765068C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE6F5921-BCE0-4A2F-ACDE-70095D5B3FCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE6F5921-BCE0-4A2F-ACDE-70095D5B3FCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE6F5921-BCE0-4A2F-ACDE-70095D5B3FCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE6F5921-BCE0-4A2F-ACDE-70095D5B3FCA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
