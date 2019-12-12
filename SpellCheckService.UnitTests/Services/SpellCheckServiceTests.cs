@@ -23,6 +23,7 @@ namespace SpellCheckService.UnitTests.Services
 
             var results = service.GetSpellings(new Core.Entities.Spellings.Request { Text = "Deal" });
 
+            Assert.NotEmpty(results.spellings);
             Assert.Equal("deal", results.spellings[0].ToLower());
         }
 
