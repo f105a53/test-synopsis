@@ -193,7 +193,7 @@ Fax:     503-886-0441
         {
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
-            using (FileStream stream = new FileStream(path + @"\" + Guid.NewGuid().ToString() + ".txt", FileMode.Create))
+            using (FileStream stream = new FileStream(Path.Combine(path , Guid.NewGuid().ToString() + ".txt"), FileMode.Create))
             {
                 using (StreamWriter writer = new StreamWriter(stream))
                 {
