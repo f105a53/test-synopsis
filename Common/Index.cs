@@ -50,7 +50,7 @@ namespace Common
         /// <param name="batchSize">The size of a batch, after which the buffers are flushed</param>
         /// <param name="progress">Returns progress messages, use <seealso cref="Progress{T}" /></param>
         /// <returns></returns>
-        public async Task Build(string path, int batchSize, IProgress<string> progress)
+        public async Task Build(string path, int batchSize, IProgress<string> progress = null)
         {
             var root = new DirectoryInfo(path);
 
@@ -64,7 +64,7 @@ namespace Common
                 var partStart = DateTime.Now;
                 var size = ByteSize.FromBits(0);
 
-                progress.Report($"Processing part {count}/{batches.Count}");
+                if (progress != null) progress.Report($"Processing part {count}/{batches.Count}");
 
                 foreach (var (fullName, length) in part)
                     try
@@ -98,15 +98,16 @@ namespace Common
                     }
                     catch (Exception e)
                     {
-                        progress.Report($"\nError while processing: {fullName}\n{e}\n");
+                        if (progress != null) progress.Report($"\nError while processing: {fullName}\n{e}\n");
                     }
 
                 //At the end of the batch, commit changes to index
                 _indexWriter.Commit();
+                _indexWriter.Dispose();
                 //Report speed
                 var sincePartStart = DateTime.Now - partStart;
                 var speed = size.Per(sincePartStart);
-                progress.Report($"Finished part: {speed.Humanize("G03").PadLeft(11)}\t{size.Humanize("G03")}");
+                if (progress != null) progress.Report($"Finished part: {speed.Humanize("G03").PadLeft(11)}\t{size.Humanize("G03")}");
             }
         }
 
