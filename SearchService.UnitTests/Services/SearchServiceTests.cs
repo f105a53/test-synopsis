@@ -18,9 +18,11 @@ namespace SearchService.UnitTests.Services
 
             await IndexTestFiles(fakeFileInput, tempPath);
 
+            System.Console.WriteLine(tempPath);
             var service = new SearchService.Core.Services.SearchService(Path.Combine(tempPath, "lucene-index"));
 
             var results = service.GetSearchResults(new Core.Entities.SearchRequest { Text = "deal" });
+
 
             Assert.Matches("FW: SAP information for your proposal", results.Results[0].Result.Subject);
         }
