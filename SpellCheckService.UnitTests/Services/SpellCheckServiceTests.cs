@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Xunit;
 
 namespace SpellCheckService.UnitTests.Services
@@ -182,8 +184,9 @@ Fax:     503-886-0441
 
             var results = service.GetSpellings(new Core.Entities.Spellings.Request { Text = "Deal" });
 
-            Assert.NotEmpty(results.spellings);
-            Assert.Equal("deal", results.spellings[0].ToLower());
+            results.Should().NotBeNull();
+            results.spellings.Should().NotBeNull().And.NotBeEmpty();
+            results.spellings.First().Should().Be("deal");
         }
 
         private async Task IndexTestFiles(string input, string path)
