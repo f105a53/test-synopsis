@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.Models;
@@ -23,12 +24,15 @@ namespace Common
 {
     public class Index : IDisposable
     {
+        private readonly IFileSystem _fileSystem;
         public const LuceneVersion AppLuceneVersion = LuceneVersion.LUCENE_48;
         private readonly Analyzer _analyzer;
         private readonly IndexWriter _indexWriter;
 
-        public Index(string indexPath)
+        public Index(string indexPath, IFileSystem fileSystem = null)
         {
+            _fileSystem = fileSystem ?? new FileSystem();
+
             //prepare lucene
             var dir = new MMapDirectory(indexPath, new NativeFSLockFactory());
             _analyzer = new StandardAnalyzer(AppLuceneVersion);
@@ -52,7 +56,7 @@ namespace Common
         /// <returns></returns>
         public async Task Build(string path, int batchSize, IProgress<string> progress = null)
         {
-            var root = new DirectoryInfo(path);
+            var root = this._fileSystem.DirectoryInfo.FromDirectoryName(path);
 
             var batches = Crawl(root).Batch(batchSize, r => r.Select(fi => (fi.FullName, fi.Length)).ToList()).ToList();
             var count = 0;
@@ -111,12 +115,19 @@ namespace Common
             }
         }
 
-        private static IEnumerable<FileInfo> Crawl(DirectoryInfo dir)
+        public static IEnumerable<IFileInfo> Crawl(IDirectoryInfo dir)
         {
-            foreach (var file in dir.EnumerateFiles()) yield return file;
-            foreach (var d in dir.EnumerateDirectories())
-            foreach (var file in Crawl(d))
+            foreach (var file in dir.EnumerateFiles())
+            {
                 yield return file;
+            }
+            foreach (var d in dir.EnumerateDirectories())
+            {
+                foreach (var file in Crawl(d))
+                {
+                    yield return file;
+                }
+            }
         }
 
         private static string[] GetEmails(Document document, string fieldName)

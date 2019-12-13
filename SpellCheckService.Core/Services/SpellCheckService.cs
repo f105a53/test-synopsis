@@ -30,6 +30,10 @@ namespace SpellCheckService.Core.Services
 
         public Spellings GetSpellings(Spellings.Request request)
         {
+            // Return empty Spellings if request text is null or empty string.
+            if (string.IsNullOrEmpty(request.Text))
+                return new Spellings();
+
             var similar = spellChecker.SuggestSimilar(request.Text, 6);
             var spellings = new Spellings { spellings = similar };
             return spellings;

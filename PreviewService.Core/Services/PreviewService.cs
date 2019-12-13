@@ -27,6 +27,11 @@ namespace PreviewService.Core.Services
 
         public async Task<ResultPreview> GetResultPreview(ResultPreview.Request request)
         {
+            // If the requests paths is null or any of the paths are empty, 
+            // return an empty ResultPreview
+            if (request.path == null || request.path.Any(x => x == ""))
+                return new ResultPreview();
+
             var previews = request.path.AsParallel().Select(async p =>
             {
                 await using var stream = _fileSystem.File.Open(p, FileMode.Open, FileAccess.Read, FileShare.Read);

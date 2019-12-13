@@ -31,6 +31,10 @@ namespace SearchService.Core.Services
 
         public SearchResults<Email> GetSearchResults(SearchRequest request)
         {
+            // Return empty search results collection if the request text is null or empty
+            if (string.IsNullOrEmpty(request.Text))
+                return new SearchResults<Email>();
+
             var reader = _indexWriter.GetReader(false);
             var searcher = new IndexSearcher(reader);
             var parser = new SimpleQueryParser(_analyzer,
