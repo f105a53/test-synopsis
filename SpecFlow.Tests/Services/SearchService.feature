@@ -5,9 +5,10 @@
 
 
 Scenario: Perform a successful search
-	When user performs a search for <searchTerm>
-	Then first emails subject should be <firstSubject>
-
+	Given I want to search for <searchTerm>
+	When pressing search
+	Then the first emails subject should be <firstSubject>
+	
 Examples:
 | searchTerm | firstSubject                          |
 | deal       | FW: SAP information for your proposal |
@@ -16,11 +17,13 @@ Examples:
 
 
 Scenario: Perform an unsuccessful search
-	When user performs a search for <searchTerm>
-	Then no emails should be displayed
+	Given I want to search for <searchTerm>
+	When pressing search
+	Then there should be no emails
 
 Examples: 
 | searchTerm   |
 | xhjuhuawdeee |
 | dwanhdaw8o   |
 | dea          |
+|              |

@@ -10,6 +10,7 @@ namespace SpecFlow.Tests.Services
     [Binding]
     public class SearchServiceSteps
     {
+        private string searchTerm;
         private SearchService.Core.Services.SearchService service;
         private SearchService.Core.Entities.SearchResults<SearchService.Core.Entities.Email> results;
 
@@ -43,23 +44,29 @@ namespace SpecFlow.Tests.Services
             service = new SearchService.Core.Services.SearchService(Path.Combine(tempPath, "lucene-index"));
         }
 
-        [When(@"user performs a search for (.*)")]
-        public void WhenUserPerformsASearchFor(string searchTerm)
+        [Given(@"I want to search for (.*)")]
+        public void GivenIWantToSearchFor(string searchTerm)
         {
-
+            this.searchTerm = searchTerm;
+        }
+        
+        [When(@"pressing search")]
+        public void WhenPressingSearch()
+        {
             results = service.GetSearchResults(new SearchService.Core.Entities.SearchRequest { Text = searchTerm });
         }
         
-        [Then(@"first emails subject should be (.*)")]
-        public void ThenFirstEmailsSubjectShouldBe(string firstSubject)
+        [Then(@"the first emails subject should be (.*)")]
+        public void ThenTheFirstEmailsSubjectShouldBe(string firstSubject)
         {
             Assert.Equal(firstSubject, results.Results[0].Result.Subject);
         }
         
-        [Then(@"no emails should be displayed")]
-        public void ThenNoEmailsShouldBeDisplayed()
+        [Then(@"there should be no emails")]
+        public void ThenThereShouldBeNoEmails()
         {
-            Assert.Empty(results.Results);
+            if (searchTerm == "") Assert.Null(results.Results);
+            else Assert.Empty(results.Results);
         }
     }
 }

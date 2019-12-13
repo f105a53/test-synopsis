@@ -23,11 +23,4 @@
     <ProjectReference Include="..\SpellCheckService.Core\SpellCheckService.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <SpecFlowFeatureFiles Update="Services\SearchService.feature">
-      <Generator>SpecFlowSingleFileGenerator</Generator>
-      <LastGenOutput>SearchService.feature.cs</LastGenOutput>
-    </SpecFlowFeatureFiles>
-  </ItemGroup>
-
 </Project>
