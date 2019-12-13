@@ -29,7 +29,7 @@ namespace PreviewService.Core.Services
         {
             // If the requests paths is null or any of the paths are empty, 
             // return an empty ResultPreview
-            if (request.path == null || request.path.Any(x => x == ""))
+            if (request.path == null || request.path.Any(x => string.IsNullOrEmpty(x)))
                 return new ResultPreview();
 
             var previews = request.path.AsParallel().Select(async p =>
