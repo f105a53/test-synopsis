@@ -4,6 +4,7 @@ using System.IO.Abstractions.TestingHelpers;
 using PreviewService.Core;
 using System.Text;
 using Xunit;
+using FluentAssertions;
 
 namespace PreviewService.UnitTests.Services
 {
@@ -42,5 +43,34 @@ namespace PreviewService.UnitTests.Services
             });
         }
 
+
+        //TestCase 1
+        [InlineData(new string [] {@"C:\temp\in.txt" }, true)]
+        //TestCase 2
+        [InlineData(new string[] { @"C:\temp\in.txt", "" }, false)]
+        //TestCase 3
+        [InlineData(new string[] { "", @"C:\temp\in.txt" }, false)]
+        //TestCase 4
+        [InlineData(new string[] { "" }, false)]
+        //TestCase 5
+        [InlineData( null , false)]
+        [Theory]
+        public async void GetResultPreview_InputRange(string[] input, bool shouldSucceed)
+        {
+            var mockFileSystem = new MockFileSystem();
+
+            var mockInputFile = new MockFileData(fakeFileInput);
+
+            mockFileSystem.AddFile(@"C:\temp\in.txt", mockInputFile);
+
+            var previewService = new Core.Services.PreviewService(mockFileSystem);
+
+            var searchResults = await previewService.GetResultPreview(new Core.Entities.ResultPreview.Request { path = input });
+
+            if (shouldSucceed)
+                searchResults.Results.Should().NotBeEmpty().And.NotBeNull();
+            else
+                searchResults.Results.Should().BeNullOrEmpty();
+        }
     }
 }
