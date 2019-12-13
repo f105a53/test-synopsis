@@ -53,6 +53,8 @@ namespace PreviewService.UnitTests.Services
         //TestCase 4
         [InlineData(new string[] { "" }, false)]
         //TestCase 5
+        [InlineData(new string[] { null }, false)]
+        //TestCase 6
         [InlineData( null , false)]
         [Theory]
         public async void GetResultPreview_InputRange(string[] input, bool shouldSucceed)
