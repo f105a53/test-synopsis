@@ -84,20 +84,13 @@ namespace SpecFlow.Tests.Services
         [Xunit.SkippableTheoryAttribute(DisplayName="Perform a successful search")]
         [Xunit.TraitAttribute("FeatureTitle", "SearchService")]
         [Xunit.TraitAttribute("Description", "Perform a successful search")]
-        [Xunit.TraitAttribute("Category", "mytag")]
         [Xunit.InlineDataAttribute("deal", "FW: SAP information for your proposal", new string[0])]
         [Xunit.InlineDataAttribute("Deal", "FW: SAP information for your proposal", new string[0])]
         [Xunit.InlineDataAttribute("DEAL", "FW: SAP information for your proposal", new string[0])]
         public virtual void PerformASuccessfulSearch(string searchTerm, string firstSubject, string[] exampleTags)
         {
-            string[] @__tags = new string[] {
-                    "mytag"};
-            if ((exampleTags != null))
-            {
-                @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
-            }
-            string[] tagsOfScenario = @__tags;
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Perform a successful search", null, @__tags);
+            string[] tagsOfScenario = exampleTags;
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Perform a successful search", null, exampleTags);
 #line 7
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -123,6 +116,46 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
 #line 9
  testRunner.Then(string.Format("first emails subject should be {0}", firstSubject), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [Xunit.SkippableTheoryAttribute(DisplayName="Perform an unsuccessful search")]
+        [Xunit.TraitAttribute("FeatureTitle", "SearchService")]
+        [Xunit.TraitAttribute("Description", "Perform an unsuccessful search")]
+        [Xunit.InlineDataAttribute("xhjuhuawdeee", new string[0])]
+        [Xunit.InlineDataAttribute("dwanhdaw8o", new string[0])]
+        [Xunit.InlineDataAttribute("dea", new string[0])]
+        public virtual void PerformAnUnsuccessfulSearch(string searchTerm, string[] exampleTags)
+        {
+            string[] tagsOfScenario = exampleTags;
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Perform an unsuccessful search", null, exampleTags);
+#line 18
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            bool isScenarioIgnored = default(bool);
+            bool isFeatureIgnored = default(bool);
+            if ((tagsOfScenario != null))
+            {
+                isScenarioIgnored = tagsOfScenario.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((this._featureTags != null))
+            {
+                isFeatureIgnored = this._featureTags.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
+            }
+            if ((isScenarioIgnored || isFeatureIgnored))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 19
+ testRunner.When(string.Format("user performs a search for {0}", searchTerm), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 20
+ testRunner.Then("no emails should be displayed", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

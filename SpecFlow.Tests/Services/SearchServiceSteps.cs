@@ -43,23 +43,23 @@ namespace SpecFlow.Tests.Services
             service = new SearchService.Core.Services.SearchService(Path.Combine(tempPath, "lucene-index"));
         }
 
-        [AfterScenario]
-        public void Teardown()
-        {
-            service = null;
-            results = null;
-        }
-
         [When(@"user performs a search for (.*)")]
-        public void WhenUserPerformsASearchFor(string input)
+        public void WhenUserPerformsASearchFor(string searchTerm)
         {
-            results = service.GetSearchResults(new SearchService.Core.Entities.SearchRequest { Text = input });
+
+            results = service.GetSearchResults(new SearchService.Core.Entities.SearchRequest { Text = searchTerm });
         }
         
         [Then(@"first emails subject should be (.*)")]
-        public void ThenFirstEmailsSubjectShouldBe(string resultSubject)
+        public void ThenFirstEmailsSubjectShouldBe(string firstSubject)
         {
-            Assert.Equal(resultSubject, results.Results[0].Result.Subject);
+            Assert.Equal(firstSubject, results.Results[0].Result.Subject);
+        }
+        
+        [Then(@"no emails should be displayed")]
+        public void ThenNoEmailsShouldBeDisplayed()
+        {
+            Assert.Empty(results.Results);
         }
     }
 }
