@@ -562,3 +562,4 @@ $RECYCLE.BIN/
 # BeatPulse healthcheck temp database
 
 # End of https://www.gitignore.io/api/linux,fsharp,csharp,windows,visualstudio,visualstudiocode
+.ionide/symbolCache.db
