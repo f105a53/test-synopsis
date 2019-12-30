@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using FluentAssertions;
 
 namespace SearchService.UnitTests.Services
 {
@@ -62,21 +63,13 @@ namespace SearchService.UnitTests.Services
             await IndexTestFiles(fakeFileInput, tempPath);
             var service = new SearchService.Core.Services.SearchService(Path.Combine(tempPath, "lucene-index"));
 
-            try
-            {
+
                 var results = service.GetSearchResults(new Core.Entities.SearchRequest { Text = input });
                 if (shouldSucceed)
                     Assert.Matches("FW: SAP information for your proposal", results.Results[0].Result.Subject);
                 else
-                    Assert.DoesNotMatch("FW: SAP information for your proposal", results.Results[0].Result.Subject);
-            }
-            catch
-            {
-                if (shouldSucceed)
-                    Assert.True(false);
-                else
-                    Assert.True(true);
-            }
+                    results.Results.Should().BeNullOrEmpty();
+
         }
     }
 }
